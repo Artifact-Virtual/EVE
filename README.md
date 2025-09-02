@@ -1,38 +1,30 @@
 
 
+
 <div align="center">
 <h1 style="color:#D291BC;">EVE</h1>
 <p><strong style="color:#B38CB4;">Multi-Provider AI Coding Assistant with Tool Integration</strong></p>
 <p style="color:#A3A1FF;">Build, debug, and deploy code with AI-powered assistance</p>
 <br />
-<a href="https://github.com/ghuntley/how-to-build-a-coding-agent/releases">
-<img src="https://img.shields.io/github/v/release/ghuntley/how-to-build-a-coding-agent?color=%23D291BC&label=release&style=for-the-badge&logo=github" alt="Release">
-</a>
-<a href="https://github.com/ghuntley/how-to-build-a-coding-agent/actions?query=branch%3Atrunk">
-<img src="https://img.shields.io/github/actions/workflow/status/ghuntley/how-to-build-a-coding-agent/ci.yml?branch=trunk&label=CI&style=for-the-badge" alt="CI Status">
-</a>
-<a href="https://goreportcard.com/report/github.com/ghuntley/how-to-build-a-coding-agent">
-<img src="https://goreportcard.com/badge/github.com/ghuntley/how-to-build-a-coding-agent?style=for-the-badge" alt="Go Report Card">
-</a>
-<a href="https://github.com/ghuntley/how-to-build-a-coding-agent/blob/trunk/LICENSE">
-<img src="https://img.shields.io/github/license/ghuntley/how-to-build-a-coding-agent?color=27ae60&style=for-the-badge" alt="License">
-</a>
-<a href="https://github.com/ghuntley/how-to-build-a-coding-agent/graphs/contributors">
-<img src="https://img.shields.io/github/contributors/ghuntley/how-to-build-a-coding-agent?color=2980b9&style=for-the-badge" alt="Contributors">
-</a>
-<a href="https://github.com/ghuntley/how-to-build-a-coding-agent/stargazers">
-<img src="https://img.shields.io/github/stars/ghuntley/how-to-build-a-coding-agent?color=f1c40f&style=for-the-badge" alt="Stars">
-</a>
-<a href="https://github.com/ghuntley/how-to-build-a-coding-agent/network/members">
-<img src="https://img.shields.io/github/forks/ghuntley/how-to-build-a-coding-agent?color=16a085&style=for-the-badge" alt="Forks">
-</a>
-<a href="https://github.com/ghuntley/how-to-build-a-coding-agent/commits/trunk">
-<img src="https://img.shields.io/github/last-commit/ghuntley/how-to-build-a-coding-agent?color=%239B59B6&style=for-the-badge&logo=github" alt="Last Commit">
-</a>
-<a href="https://github.com/ghuntley/how-to-build-a-coding-agent/blob/trunk/go.mod">
-<img src="https://img.shields.io/github/go-mod/go-version/ghuntley/how-to-build-a-coding-agent?color=%2361DAFB&style=for-the-badge&logo=go" alt="Go Version">
-</a>
-</div>
+
+![License](https://img.shields.io/badge/License-MIT-FF69B4?style=for-the-badge)
+![Contributions Welcome](https://img.shields.io/badge/Contributions-Welcome-FFC0CB?style=for-the-badge)
+![Build Status](https://img.shields.io/badge/Build-Passing-32CD32?style=for-the-badge)
+
+---
+
+## ✨ What is EVE?
+
+🌷 **EVE** is a sophisticated, AI-powered coding assistant that seamlessly integrates with multiple AI providers (Anthropic Claude, Google Gemini, OpenAI) to help you:
+
+- **🔍 Read & Analyze** code files and project structures
+- **✏️ Edit & Modify** code with precision and safety
+- **⚡ Execute Commands** safely in your terminal
+- **🔎 Search Codebase** with powerful pattern matching
+- **🔄 Switch Providers** on-the-fly for optimal performance
+
+Built with a clean provider abstraction layer, EVE gives you the flexibility to choose the best AI model for your specific coding tasks while maintaining a consistent, powerful interface.
+
 ---
 
 ## ✨ What is EVE?

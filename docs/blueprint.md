@@ -2,14 +2,6 @@
 
 #### Logic Flow
 
-1. Wait for user input.
-2. Send the input to the LLM.
-3. The LLM either responds directly or requests a tool to be used.
-4. The agent executes the requested tool (e.g., reading a file).
-5. The tool's result is sent back to the LLM.
-6. The LLM provides the final response.
-
-This forms the core **feedback loop**.
 
 ```mermaid
 graph LR
@@ -79,11 +71,11 @@ graph TB
 
 ---
 
-##### To do:
+#### Feedback Loop
 
-* Custom tools (e.g., API caller, web scraper)
-* Tool chains (run tools in a sequence)
-* Memory features (remember things across sessions)
-* A web UI for your agent
-* Integration with local AI models and frameworks like tf, pytorch, onnx, ollama, openrouter, etc.
-
+1. Wait for user input.
+2. Send the input to the LLM.
+3. The LLM either responds directly or requests a tool to be used.
+4. The agent executes the requested tool (e.g., reading a file).
+5. The tool's result is sent back to the LLM.
+6. The LLM provides the final response.

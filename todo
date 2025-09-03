@@ -1,0 +1,7 @@
+##### To do:
+
+* Custom tools (e.g., API caller, web scraper)
+* Tool chains (run tools in a sequence)
+* Memory features (remember things across sessions)
+* A web UI for your agent
+* Integration with local AI models and frameworks like tf, pytorch, onnx, ollama, openrouter, etc.

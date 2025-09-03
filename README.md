@@ -7,11 +7,21 @@
 <p style="color:#A3A1FF;">Build, debug, and deploy code with AI-powered assistance</p>
 <br />
 
-![License](https://img.shields.io/badge/License-MIT-FF69B4?style=for-the-badge)
-![Contributions Welcome](https://img.shields.io/badge/Contributions-Welcome-FFC0CB?style=for-the-badge)
-![Build Status](https://img.shields.io/badge/Build-Passing-32CD32?style=for-the-badge)
+<div align="center">
 
----
+[![Go Version](https://img.shields.io/badge/Go-1.24.2+-00ADD8?style=for-the-badge&logo=go)](https://golang.org/)
+[![License](https://img.shields.io/badge/License-MIT-FF69B4?style=for-the-badge)](LICENSE)
+[![Go Report Card](https://goreportcard.com/badge/github.com/Artifact-Virtual/EVE?style=for-the-badge)](https://goreportcard.com/report/github.com/Artifact-Virtual/EVE)
+[![GitHub Stars](https://img.shields.io/github/stars/Artifact-Virtual/EVE?style=for-the-badge)](https://github.com/Artifact-Virtual/EVE/stargazers)
+[![GitHub Issues](https://img.shields.io/github/issues/Artifact-Virtual/EVE?style=for-the-badge)](https://github.com/Artifact-Virtual/EVE/issues)
+[![Contributions Welcome](https://img.shields.io/badge/Contributions-Welcome-FFC0CB?style=for-the-badge)](CONTRIBUTING.md)
+[![Build Status](https://img.shields.io/badge/Build-Passing-32CD32?style=for-the-badge)](Makefile)
+
+
+
+[🚀 Quick Start](#-quick-start) • [📚 Documentation](#-documentation) • [🤝 Contributing](#-contributing) • [📄 License](#-license)
+
+</div>
 
 ## ✨ What is EVE?
 
@@ -21,6 +31,9 @@
 - **✏️ Edit & Modify** code with precision and safety
 - **⚡ Execute Commands** safely in your terminal
 - **🔎 Search Codebase** with powerful pattern matching
+- **🌐 Make API Calls** to external services
+- **🕷️ Scrape Webpages** for data extraction
+- **🧠 Remember Conversations** across sessions
 - **🔄 Switch Providers** on-the-fly for optimal performance
 
 Built with a clean provider abstraction layer, EVE gives you the flexibility to choose the best AI model for your specific coding tasks while maintaining a consistent, powerful interface.
@@ -30,18 +43,24 @@ Built with a clean provider abstraction layer, EVE gives you the flexibility to 
 ## 🚀 Key Features
 
 ### 🤖 Multi-Provider Support
+
 - **🧠 Anthropic Claude** - Excellent for complex reasoning and code analysis
 - **⚡ Google Gemini** - Fast and efficient for quick tasks
 - **🎨 OpenAI GPT** - Versatile for creative coding solutions
 - **🔄 Easy Switching** - Change providers with a single environment variable
 
 ### 🛠️ Powerful Tool Integration
+
 - **📁 File Operations** - Read, edit, create, and manage files
 - **💻 Terminal Commands** - Execute shell commands safely with output capture
 - **🔍 Code Search** - Find patterns across your entire codebase using ripgrep
 - **📂 Directory Exploration** - Navigate and understand project structure
+- **🌐 API Caller** - Make HTTP requests to external services
+- **🕷️ Web Scraper** - Extract data from webpages using CSS selectors
+- **🧠 Memory Persistence** - Save and load conversation history
 
 ### 🏗️ Clean Architecture
+
 - **🔌 Provider Abstraction** - Clean interface for adding new AI providers
 - **🧰 Tool System** - Extensible tool framework with JSON schema validation
 - **⚙️ Configuration Management** - Environment-based setup with validation
@@ -52,6 +71,7 @@ Built with a clean provider abstraction layer, EVE gives you the flexibility to 
 ## 🏁 Quick Start
 
 ### 📋 Prerequisites
+
 - **Go 1.24.2+** or [devenv](https://devenv.sh/) (recommended for easy setup)
 - **At least one AI provider API key**:
   - [Anthropic API Key](https://www.anthropic.com/product/claude) (recommended)
@@ -61,6 +81,7 @@ Built with a clean provider abstraction layer, EVE gives you the flexibility to 
 ### 🔧 Setup Environment
 
 #### Option 1: Recommended (using devenv)
+
 ```bash
 # Clone the repository
 git clone https://github.com/ghuntley/how-to-build-a-coding-agent.git
@@ -71,6 +92,7 @@ devenv shell
 ```
 
 #### Option 2: Manual setup
+
 ```bash
 # Clone the repository
 git clone https://github.com/ghuntley/how-to-build-a-coding-agent.git
@@ -115,16 +137,19 @@ go run code_search_tool.go  # With code search functionality
 ```bash
 go run chat.go
 ```
-```
+
+```text
 You: Hello, can you help me write a function?
 EVE: I'd be happy to help you write a function! What kind of function are you thinking of?
 ```
 
 ### File Analysis
+
 ```bash
 go run read.go
 ```
-```
+
+```text
 You: Read the main.go file and explain what it does
 EVE: Let me read that file for you...
 
@@ -133,10 +158,12 @@ This appears to be the main entry point for a Go application that...
 ```
 
 ### Code Editing
+
 ```bash
 go run edit_tool.go
 ```
-```
+
+```text
 You: Add error handling to the database connection function
 EVE: I'll help you add proper error handling. Let me first read the current implementation...
 

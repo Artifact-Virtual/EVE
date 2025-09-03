@@ -7,13 +7,13 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/anthropics/anthropic-sdk-go"
-	"github.com/invopop/jsonschema"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/PuerkitoBio/goquery"
 )
 
 // GenericAgent uses the LLMProvider interface for provider-agnostic operation
@@ -80,8 +80,49 @@ var APICallDefinition = ToolDefinition{
 	Function:    APICall,
 }
 
+type WebScraperInput struct {
+	URL      string `json:"url" jsonschema_description:"The URL to scrape"`
+	Selector string `json:"selector" jsonschema_description:"CSS selector to extract text from"`
+}
+
+var WebScraperInputSchema = GenerateSchema[WebScraperInput]()
+
+func WebScraper(input json.RawMessage) (string, error) {
+	scraperInput := WebScraperInput{}
+	err := json.Unmarshal(input, &scraperInput)
+	if err != nil {
+		return "", err
+	}
+	resp, err := http.Get(scraperInput.URL)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	doc, err := goquery.NewDocumentFromReader(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	var result strings.Builder
+	doc.Find(scraperInput.Selector).Each(func(i int, s *goquery.Selection) {
+		result.WriteString(s.Text() + "\n")
+	})
+	return result.String(), nil
+}
+
+var WebScraperDefinition = ToolDefinition{
+	Name:        "web_scraper",
+	Description: "Scrape text from a webpage using a CSS selector.",
+	InputSchema: WebScraperInputSchema,
+	Function:    WebScraper,
+}
+
 func (a *GenericAgent) Run(ctx context.Context) error {
 	conversation := []Message{}
+
+	// Load conversation from file
+	if data, err := os.ReadFile("conversation.json"); err == nil {
+		json.Unmarshal(data, &conversation)
+	}
 
 	// EVE Welcome Banner
 	fmt.Println("╔══════════════════════════════════════════════════════════════╗")
@@ -268,6 +309,11 @@ func (a *GenericAgent) Run(ctx context.Context) error {
 	if a.verbose {
 		log.Println("Chat session ended")
 	}
+
+	// Save conversation to file
+	data, _ := json.Marshal(conversation)
+	os.WriteFile("conversation.json", data, 0644)
+
 	return nil
 }
 
@@ -326,6 +372,7 @@ func main() {
 		EditFileDefinition,
 		CodeSearchDefinition,
 		APICallDefinition,
+		WebScraperDefinition,
 	}
 
 	if *verbose {

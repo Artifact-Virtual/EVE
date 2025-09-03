@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>EVE Getting Started Handbook</title>
+    <title>Getting Started</title>
 
     <!-- External Dependencies -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -19,7 +19,7 @@
             --bg-900: #000000; /* AMOLED black */
             --bg-800: #111827; /* Dark gray */
             --bg-700: #1f2937; /* Medium gray */
-            /* Responsive Design */
+            --accent-pink: #ec4899; /* Pink */
             --accent-purple: #8b5cf6; /* Purple */
             --muted: #94a3b8; /* Light gray */
             --text-white: #ffffff;
@@ -35,216 +35,64 @@
             line-height: 1.6;
         }
 
-        /* Glass Morphism Effects */
-        .glass {
-            background: rgba(17,24,39,0.6);
-            border: 1px solid var(--border-light);
-            -webkit-backdrop-filter: blur(8px);
-            backdrop-filter: blur(8px);
-            border-radius: 8px;
-        }
+        /* Glass Effects */
+        .glass { background: rgba(17,24,39,0.6); border: 1px solid var(--border-light); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+        .glass-2 { background: rgba(17,24,39,0.75); border: 1px solid var(--border-medium); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+        .glass-card { background: rgba(17,24,39,0.8); border: 1px solid var(--border-light); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
 
-        .glass-2 {
-            background: rgba(17,24,39,0.75);
-            border: 1px solid var(--border-medium);
-            -webkit-backdrop-filter: blur(12px);
-            backdrop-filter: blur(12px);
-            border-radius: 12px;
-        }
+        /* No rounded corners anywhere */
+        * { border-radius: 0 !important; }
 
-        .glass-card {
-            background: rgba(17,24,39,0.8);
-            border: 1px solid var(--border-light);
-            -webkit-backdrop-filter: blur(16px);
-            backdrop-filter: blur(16px);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-
-            /* No rounded corners anywhere */
-            * { border-radius: 0 !important; }
-
-            /* Header fully transparent */
-            #main-header { background: transparent !important; border: none !important; box-shadow: none !important; }
-        }
+        /* Header fully transparent */
+        #main-header { background: transparent !important; border: none !important; box-shadow: none !important; }
 
         /* Gradient Utilities */
-        .gradient-text {
-            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
-    <header id="main-header" class="w-full py-6 fixed top-0 left-0 z-50 transition-all duration-300 ease-in-out">
-        <div class="max-w-7xl mx-auto px-6 flex items-center justify-start">
-            <!-- Logo only -->
-            <a href="/" class="flex items-center">
-                <div class="w-12 h-12 flex items-center justify-center">
-                    <svg width="36" height="36" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <linearGradient id="logoGradient" x1="0" y1="0" x2="250" y2="250" gradientUnits="userSpaceOnUse">
-                                <stop stop-color="#EC4899" />
-                                <stop offset="1" stop-color="#8B5CF6" />
-                            </linearGradient>
-                        </defs>
-                        <g class="logo-group">
-                            <path class="path1" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="url(#logoGradient)"/>
-                            <path class="path2" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="none" stroke="url(#logoGradient)" stroke-width="4"/>
-                        </g>
-                    </svg>
-                </div>
-            </a>
-        </div>
-    </header>
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 0px;
-            font-weight: 500;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .btn-secondary:hover {
-            color: white;
-            border-color: rgba(255,255,255,0.2);
-            background: rgba(255,255,255,0.05);
-        }
+        .gradient-text { background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 
         /* Navigation Styles */
-        .sidebar {
-            transition: transform 0.3s ease-in-out;
-            transform: translateX(100%);
-        }
-
-        .sidebar.open {
-            transform: translateX(0);
-        }
-
-        .nav-link {
-            color: var(--muted);
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            transition: all 0.2s ease;
-            display: block;
-        }
-
-        .nav-link:hover {
-            color: white;
-            background: rgba(255,255,255,0.05);
-        }
-
-        .nav-link.active {
-            color: white;
-            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1));
-            border-left: 3px solid var(--accent-pink);
-        }
+        .sidebar { transition: transform 0.3s ease-in-out; transform: translateX(100%); }
+        .sidebar.open { transform: translateX(0); }
+        .nav-link { color: var(--muted); text-decoration: none; padding: 8px 16px; transition: all 0.2s ease; display: block; }
+        .nav-link:hover { color: white; background: rgba(255,255,255,0.05); }
+        .nav-link.active { color: white; background: linear-gradient(135deg, rgba(236,72,153,0.1), rgba(139,92,246,0.1)); border-left: 3px solid var(--accent-pink); }
 
         /* Content Styles */
-        .content-section {
-            scroll-margin-top: 100px;
-        }
-
-        .section-title {
-            color: white;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-light);
-        }
-
-        .subsection-title {
-            color: var(--muted);
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-        }
+        .content-section { scroll-margin-top: 100px; }
+        .section-title { color: white; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-light); }
+        .subsection-title { color: var(--muted); margin-top: 2rem; margin-bottom: 1rem; }
 
         /* Code Styling */
-        code {
-            font-family: 'JetBrains Mono', 'Fira Code', monospace;
-            background: rgba(17,24,39,0.5);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-size: 0.9em;
-        }
-
-        pre {
-            background: rgba(17,24,39,0.8);
-            border: 1px solid var(--border-light);
-            border-radius: 8px;
-            padding: 16px;
-            overflow-x: auto;
-            margin: 16px 0;
-        }
-
-        pre code {
-            background: none;
-            padding: 0;
-        }
+        code { font-family: 'JetBrains Mono','Fira Code',monospace; background: rgba(17,24,39,0.5); padding: 2px 6px; font-size: 0.9em; }
+        pre { background: rgba(17,24,39,0.8); border: 1px solid var(--border-light); padding: 16px; overflow-x: auto; margin: 16px 0; }
+        pre code { background: none; padding: 0; }
 
         /* Table Styling */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 16px 0;
-        }
-
-        th, td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid var(--border-light);
-        }
-
-        th {
-            background: rgba(17,24,39,0.5);
-            font-weight: 600;
-        }
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-light); }
+        th { background: rgba(17,24,39,0.5); font-weight: 600; }
 
         /* Responsive Design */
         @media (max-width: 768px) {
-            .sidebar {
-                position: fixed;
-                top: 0;
-                right: 0;
-                width: 280px;
-                height: 100vh;
-                z-index: 1000;
-                background: var(--bg-800);
-                border-left: 1px solid var(--border-light);
-            }
-
-            .main-content {
-                margin-left: 0;
-            }
+            .sidebar { position: fixed; top: 0; right: 0; width: 280px; height: 100vh; z-index: 1000; background: var(--bg-800); border-left: 1px solid var(--border-light); }
+            .main-content { margin-left: 0; }
         }
 
         /* Smooth Scrolling */
-        html {
-            scroll-behavior: smooth;
-        }
+        html { scroll-behavior: smooth; }
 
         /* Custom Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: var(--bg-800);
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: var(--accent-purple);
-            border-radius: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--accent-pink);
-        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-800); }
+    ::-webkit-scrollbar-thumb { background: var(--accent-purple); border-radius: 0; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--accent-pink); }
     </style>
 </head>
 <body class="min-h-screen">
 
 <!-- Header -->
-<header id="main-header" class="w-full py-6 fixed top-0 left-0 z-50 transition-all duration-300 ease-in-out glass">
-    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        <!-- Logo -->
-        <a href="/" class="flex items-center gap-3">
+<header id="main-header" class="w-full py-6 fixed top-0 left-0 z-50 transition-all duration-300 ease-in-out">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-start">
+    <a href="/" class="flex items-center" aria-label="EVE Home" title="EVE Home">
             <div class="w-12 h-12 flex items-center justify-center">
                 <svg width="36" height="36" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <defs>
@@ -256,32 +104,10 @@
                     <g class="logo-group">
                         <path class="path1" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="url(#logoGradient)"/>
                         <path class="path2" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="none" stroke="url(#logoGradient)" stroke-width="4"/>
-                        <path class="path3" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L125 125 Z" fill="none" stroke="white" stroke-width="2" opacity="0.3"/>
                     </g>
                 </svg>
             </div>
-            <div class="flex flex-col">
-                <span class="text-xl font-bold gradient-text">EVE</span>
-                <span class="text-xs text-[var(--muted)]">AI Coding Assistant</span>
-            </div>
         </a>
-
-        <!-- Desktop Navigation -->
-        <nav class="hidden md:flex items-center gap-6">
-            <a href="#overview" class="nav-link">Overview</a>
-            <a href="#prerequisites" class="nav-link">Prerequisites</a>
-            <a href="#installation" class="nav-link">Installation</a>
-            <a href="#configuration" class="nav-link">Configuration</a>
-            <a href="#building" class="nav-link">Building</a>
-            <a href="#running" class="nav-link">Running</a>
-            <a href="#usage" class="nav-link">Usage</a>
-            <a href="#troubleshooting" class="nav-link">Troubleshooting</a>
-        </nav>
-
-        <!-- Mobile Menu Button -->
-        <button id="mobileToggle" class="md:hidden p-2 text-[var(--muted)] hover:text-white transition" aria-label="Open mobile menu">
-            <i class="fas fa-bars text-xl"></i>
-        </button>
     </div>
 </header>
 
@@ -298,15 +124,15 @@
         <!-- Navigation Links -->
         <nav class="flex-1 px-4">
             <a href="#overview" class="nav-link mb-2" onclick="closeMobileMenu()">✨ Quick Overview</a>
-            <a href="#prerequisites" class="nav-link mb-2" onclick="closeMobileMenu()">�️ Prerequisites</a>
+            <a href="#prerequisites" class="nav-link mb-2" onclick="closeMobileMenu()">🗂️ Prerequisites</a>
             <a href="#installation" class="nav-link mb-2" onclick="closeMobileMenu()">🧰 Installation</a>
             <a href="#configuration" class="nav-link mb-2" onclick="closeMobileMenu()">🧭 Configuration</a>
             <a href="#building" class="nav-link mb-2" onclick="closeMobileMenu()">🏗️ Building</a>
             <a href="#running" class="nav-link mb-2" onclick="closeMobileMenu()">⏵ Running</a>
-            <a href="#usage" class="nav-link mb-2" onclick="closeMobileMenu()">�️ Basic Usage</a>
+            <a href="#usage" class="nav-link mb-2" onclick="closeMobileMenu()">🗨️ Basic Usage</a>
             <a href="#troubleshooting" class="nav-link mb-2" onclick="closeMobileMenu()">🧯 Troubleshooting</a>
-            <a href="#next-steps" class="nav-link mb-2" onclick="closeMobileMenu()">�️ Next Steps</a>
-            <a href="#support" class="nav-link mb-2" onclick="closeMobileMenu()">� Support</a>
+            <a href="#next-steps" class="nav-link mb-2" onclick="closeMobileMenu()">🎯 Next Steps</a>
+            <a href="#support" class="nav-link mb-2" onclick="closeMobileMenu()">📡 Support</a>
         </nav>
     </div>
 </div>
@@ -340,11 +166,16 @@
                 <section class="mb-12">
                     <div class="text-center mb-8">
                         <h1 class="text-5xl font-bold mb-4">
-                            <span class="gradient-text">� EVE</span> Getting Started Handbook
+                            <span class="gradient-text">EVE</span> Getting Started Handbook
                         </h1>
                         <p class="text-xl text-[var(--muted)] max-w-3xl mx-auto">
                             Welcome to <strong>EVE</strong> - your AI-powered coding assistant! This handbook will guide you through setting up and running EVE on your system.
                         </p>
+                        <div class="mt-4">
+                            <a href="https://github.com/Artifact-Virtual/EVE" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-[var(--accent-pink)] hover:underline text-lg font-semibold">
+                                <i class="fab fa-github"></i> View on GitHub
+                            </a>
+                        </div>
                     </div>
 
                     <div class="grid md:grid-cols-3 gap-6 mb-8">
@@ -374,7 +205,7 @@
 
                         <div class="grid md:grid-cols-3 gap-4 mb-6">
                             <div class="text-center p-4 bg-[rgba(236,72,153,0.1)] rounded-lg">
-                                <div class="text-2xl mb-2">�</div>
+                                <div class="text-2xl mb-2">🧩</div>
                                 <h4 class="font-semibold">Anthropic Claude</h4>
                                 <p class="text-sm text-[var(--muted)]">Excellent for complex reasoning and code analysis</p>
                             </div>
@@ -402,7 +233,7 @@
                 </section>
 
                 <section id="prerequisites" class="content-section mb-12">
-                    <h2 class="section-title text-3xl font-bold">�️ Prerequisites</h2>
+                        <h2 class="section-title text-3xl font-bold">🗂️ Prerequisites</h2>
                     <div class="glass-card p-6">
                         <p class="mb-6">Before installing EVE, ensure you have the following:</p>
 
@@ -684,9 +515,8 @@ go run agent.go</code></pre>
                 </section>
 
                 <section id="usage" class="content-section mb-12">
-                    <h2 class="section-title text-3xl font-bold">�️ Basic Usage</h2>
+                    <h2 class="section-title text-3xl font-bold">🗨️ Basic Usage</h2>
                     <div class="glass-card p-6">
-                        <p class="mb-6">Let's walk through some basic interactions with EVE:</p>
 
                         <div class="space-y-6">
                             <div>
@@ -812,7 +642,7 @@ chmod +x agent chat read list_files bash_tool edit_tool</code></pre>
                 </section>
 
                 <section id="next-steps" class="content-section mb-12">
-                    <h2 class="section-title text-3xl font-bold">�️ Next Steps</h2>
+                    <h2 class="section-title text-3xl font-bold">🎯 Next Steps</h2>
                     <div class="glass-card p-6">
                         <p class="mb-6">Now that you have EVE running, here are some recommended next steps:</p>
 
@@ -857,7 +687,7 @@ chmod +x agent chat read list_files bash_tool edit_tool</code></pre>
                 </section>
 
                 <section id="support" class="content-section mb-12">
-                    <h2 class="section-title text-3xl font-bold">� Support</h2>
+                    <h2 class="section-title text-3xl font-bold">📡 Support</h2>
                     <div class="glass-card p-6">
                         <div class="grid md:grid-cols-2 gap-6">
                             <div>
@@ -871,14 +701,14 @@ chmod +x agent chat read list_files bash_tool edit_tool</code></pre>
                             <div>
                                 <h3 class="subsection-title text-xl font-semibold">Community</h3>
                                 <ul class="space-y-2 text-[var(--muted)]">
-                                    <li><a href="https://github.com/Artifact-Virtual/EVE/issues" class="text-[var(--accent-purple)] hover:underline">🐛 Issues</a> - Report bugs</li>
-                                    <li><a href="https://github.com/Artifact-Virtual/EVE/discussions" class="text-[var(--accent-purple)] hover:underline">💬 Discussions</a> - Community support</li>
+                                    <li><a href="https://github.com/Artifact-Virtual/EVE/issues" class="text-[var(--accent-purple)] hover:underline">🪲 Issues</a> - Report bugs</li>
+                                    <li><a href="https://github.com/Artifact-Virtual/EVE/discussions" class="text-[var(--accent-purple)] hover:underline">🗨️ Discussions</a> - Community support</li>
                                 </ul>
                             </div>
                         </div>
 
                         <div class="mt-8 p-6 bg-gradient-to-r from-[rgba(236,72,153,0.1)] to-[rgba(139,92,246,0.1)] rounded-lg text-center">
-                            <p class="text-lg font-semibold mb-2">Happy coding with EVE! 🚀</p>
+                            <p class="text-lg font-semibold mb-2">Happy coding with EVE! 🛫</p>
                             <p class="text-[var(--muted)]">Your AI-powered coding assistant is ready to help you build amazing things.</p>
                         </div>
                     </div>

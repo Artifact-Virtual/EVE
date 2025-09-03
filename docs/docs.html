@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manual</title>
+
+    <!-- External Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- EVE Theme Styles (aligned with TEMPLATE.html) -->
+    <style>
+        :root {
+            --bg-900: #000000;
+            --bg-800: #111827;
+            --bg-700: #1f2937;
+            --accent-pink: #ec4899;
+            --accent-purple: #8b5cf6;
+            --muted: #94a3b8;
+            --text-white: #ffffff;
+            --border-light: rgba(255,255,255,0.04);
+            --border-medium: rgba(255,255,255,0.08);
+        }
+    body { background-color: var(--bg-900); color: var(--text-white); font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; line-height: 1.6; }
+
+    /* Brand rule: absolutely no rounded corners anywhere */
+    * { border-radius: 0 !important; }
+
+    /* Header fully transparent */
+    #main-header { background: transparent !important; border: none !important; box-shadow: none !important; }
+
+    .glass { background: rgba(17,24,39,0.6); border: 1px solid var(--border-light); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
+    .glass-2 { background: rgba(17,24,39,0.75); border: 1px solid var(--border-medium); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
+    .glass-card { background: rgba(17,24,39,0.8); border: 1px solid var(--border-light); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+
+        .gradient-text { background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .gradient-bg { background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple)); }
+        .gradient-border { background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple)); padding: 1px; }
+        .gradient-border > * { background: var(--bg-900); border-radius: inherit; }
+
+        .sidebar { transition: transform 0.3s ease-in-out; transform: translateX(100%); }
+        .sidebar.open { transform: translateX(0); }
+
+        .nav-link { color: var(--muted); text-decoration: none; padding: 8px 12px; border-left: 3px solid transparent; display: block; transition: all 0.2s ease; }
+        .nav-link:hover { color: white; background: rgba(255,255,255,0.05); }
+        .nav-link.active { color: white; background: linear-gradient(135deg, rgba(236,72,153,0.1), rgba(139,92,246,0.1)); border-left-color: var(--accent-pink); }
+
+        .btn-primary { background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple)); color: white; padding: 12px 24px; border-radius: 0px; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s ease; box-shadow: 0 4px 16px rgba(236,72,153,0.3); }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(236,72,153,0.4); }
+        .btn-secondary { background: transparent; color: var(--muted); padding: 12px 24px; border: 1px solid rgba(255,255,255,0.1); border-radius: 0px; font-weight: 500; text-decoration: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s ease; }
+        .btn-secondary:hover { color: white; border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); }
+
+        .content-section { scroll-margin-top: 100px; }
+        .section-title { color: white; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border-light); }
+        .subsection-title { color: var(--muted); margin-top: 2rem; margin-bottom: 1rem; }
+
+    code { font-family: 'JetBrains Mono','Fira Code',monospace; background: rgba(17,24,39,0.5); padding: 2px 6px; font-size: 0.9em; }
+    pre { background: rgba(17,24,39,0.8); border: 1px solid var(--border-light); padding: 16px; overflow-x: auto; margin: 16px 0; position: relative; }
+        pre code { background: none; padding: 0; }
+
+        table { width: 100%; border-collapse: collapse; margin: 16px 0; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border-light); }
+        th { background: rgba(17,24,39,0.5); font-weight: 600; }
+
+        @media (max-width: 768px) {
+            .sidebar { position: fixed; top: 0; right: 0; width: 280px; height: 100vh; z-index: 1000; background: var(--bg-800); border-left: 1px solid var(--border-light); }
+        }
+
+        html { scroll-behavior: smooth; }
+        ::-webkit-scrollbar { width: 8px; } ::-webkit-scrollbar-track { background: var(--bg-800); } ::-webkit-scrollbar-thumb { background: var(--accent-purple); border-radius: 0; } ::-webkit-scrollbar-thumb:hover { background: var(--accent-pink); }
+    </style>
+</head>
+<body class="min-h-screen">
+
+<!-- Header -->
+<header id="main-header" class="w-full py-6 fixed top-0 left-0 z-50 transition-all duration-300 ease-in-out">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-start">
+        <a href="/" class="flex items-center" aria-label="EVE Home" title="EVE Home">
+            <div class="w-12 h-12 flex items-center justify-center">
+                <svg width="36" height="36" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="logoGradient" x1="0" y1="0" x2="250" y2="250" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#EC4899" />
+                            <stop offset="1" stop-color="#8B5CF6" />
+                        </linearGradient>
+                    </defs>
+                    <g class="logo-group">
+                        <path d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="url(#logoGradient)"/>
+                        <path d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="none" stroke="url(#logoGradient)" stroke-width="4"/>
+                    </g>
+                </svg>
+            </div>
+        </a>
+    </div>
+</header>
+
+<!-- Mobile Sidebar -->
+<div id="sidebar" class="sidebar fixed top-0 right-0 w-80 h-full z-50 md:hidden">
+    <div class="flex flex-col h-full bg-[var(--bg-800)] border-l border-[var(--border-light)]">
+        <div class="flex justify-end p-4">
+            <button id="closeSidebar" class="text-[var(--muted)] hover:text-white transition" aria-label="Close mobile menu">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        <nav class="flex-1 px-4 pb-6 space-y-1">
+            <a href="getting_started.html" class="nav-link" onclick="closeMobileMenu()">� Getting Started</a>
+            <a href="#1-system-overview" class="nav-link" onclick="closeMobileMenu()">1. System Overview</a>
+            <a href="#2-core-architecture" class="nav-link" onclick="closeMobileMenu()">2. Core Architecture</a>
+            <a href="#3-provider-abstraction-layer" class="nav-link" onclick="closeMobileMenu()">3. Provider Abstraction Layer</a>
+            <a href="#4-tool-system-architecture" class="nav-link" onclick="closeMobileMenu()">4. Tool System Architecture</a>
+            <a href="#5-database-and-persistence-layer" class="nav-link" onclick="closeMobileMenu()">5. Database & Persistence</a>
+            <a href="#6-configuration-management" class="nav-link" onclick="closeMobileMenu()">6. Configuration</a>
+            <a href="#7-execution-flow-and-state-management" class="nav-link" onclick="closeMobileMenu()">7. Execution & State</a>
+            <a href="#8-error-handling-and-resilience" class="nav-link" onclick="closeMobileMenu()">8. Errors & Resilience</a>
+            <a href="#9-performance-characteristics" class="nav-link" onclick="closeMobileMenu()">9. Performance</a>
+            <a href="#10-security-considerations" class="nav-link" onclick="closeMobileMenu()">10. Security</a>
+            <a href="#11-extensibility-framework" class="nav-link" onclick="closeMobileMenu()">11. Extensibility</a>
+            <a href="#12-deployment-and-operations" class="nav-link" onclick="closeMobileMenu()">12. Deployment & Ops</a>
+            <a href="#conclusion" class="nav-link" onclick="closeMobileMenu()">Conclusion</a>
+        </nav>
+    </div>
+</div>
+
+<!-- Main -->
+<main class="pt-24 pb-12">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="flex gap-8">
+            <!-- Sidebar (Desktop) -->
+            <aside class="hidden md:block w-72 flex-shrink-0">
+                <div class="sticky top-24 glass-card p-6">
+                    <h3 class="text-lg font-semibold mb-4 gradient-text">📚 Technical Docs</h3>
+                    <nav class="space-y-1 text-sm">
+                        <a href="#1-system-overview" class="nav-link">1. System Overview</a>
+                        <a href="#2-core-architecture" class="nav-link">2. Core Architecture</a>
+                        <a href="#3-provider-abstraction-layer" class="nav-link">3. Provider Abstraction Layer</a>
+                        <a href="#4-tool-system-architecture" class="nav-link">4. Tool System Architecture</a>
+                        <a href="#5-database-and-persistence-layer" class="nav-link">5. Database & Persistence</a>
+                        <a href="#6-configuration-management" class="nav-link">6. Configuration</a>
+                        <a href="#7-execution-flow-and-state-management" class="nav-link">7. Execution & State</a>
+                        <a href="#8-error-handling-and-resilience" class="nav-link">8. Errors & Resilience</a>
+                        <a href="#9-performance-characteristics" class="nav-link">9. Performance</a>
+                        <a href="#10-security-considerations" class="nav-link">10. Security</a>
+                        <a href="#11-extensibility-framework" class="nav-link">11. Extensibility</a>
+                        <a href="#12-deployment-and-operations" class="nav-link">12. Deployment & Ops</a>
+                        <a href="#conclusion" class="nav-link">Conclusion</a>
+                    </nav>
+                </div>
+            </aside>
+
+            <!-- Content -->
+            <div class="flex-1 min-w-0">
+                <!-- Hero -->
+                <section class="mb-10">
+                    <div class="text-center mb-8">
+                        <h1 class="text-5xl font-bold mb-4"><span class="gradient-text">EVE</span> Technical Reference Manual</h1>
+                        <p class="text-xl text-[var(--muted)] max-w-3xl mx-auto">Deep technical specifications of the EVE system: architecture, providers, tools, configuration, performance, and operations.</p>
+                        <div class="mt-6 flex justify-center gap-4">
+                            <a class="btn-primary" href="getting_started.html">Getting Started <i class="fas fa-arrow-right"></i></a>
+                            <a class="btn-secondary" href="#12-deployment-and-operations"><i class="fas fa-server"></i> Deployment</a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Sections populated from TECHNICAL_MANUAL.md -->
+                <section id="1-system-overview" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">1. System Overview</h2>
+                    <div class="glass-card p-6">
+                        <h3 class="subsection-title text-xl font-semibold">1.1 Purpose and Scope</h3>
+                        <p class="text-[var(--muted)] mb-4">EVE (Enhanced Virtual Environment) is a sophisticated AI-powered coding assistant designed to provide intelligent, context-aware assistance for software development tasks. The system implements a multi-provider architecture that enables seamless integration with various LLM services while maintaining a consistent interface and behavior.</p>
+
+                        <h3 class="subsection-title text-xl font-semibold">1.2 Key Design Principles</h3>
+                        <ul class="list-disc list-inside space-y-2 text-[var(--muted)] mb-4">
+                            <li><strong>Provider Agnosticism</strong>: Abstract interface allowing transparent switching between LLM providers</li>
+                            <li><strong>Tool-Driven Architecture</strong>: Extensible tool system for executing complex operations</li>
+                            <li><strong>State Persistence</strong>: File-based database system for project state management</li>
+                            <li><strong>Modular Design</strong>: Clean separation of concerns with well-defined interfaces</li>
+                            <li><strong>Resilient Operation</strong>: Comprehensive error handling and graceful degradation</li>
+                        </ul>
+
+                        <h3 class="subsection-title text-xl font-semibold">1.3 System Boundaries</h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <p class="font-semibold mb-2">Included Components</p>
+                                <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                                    <li>Core agent execution engine</li>
+                                    <li>Multi-provider LLM integration</li>
+                                    <li>Tool execution framework</li>
+                                    <li>Project database management</li>
+                                    <li>Web interface (optional)</li>
+                                    <li>Configuration management</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p class="font-semibold mb-2">External Dependencies</p>
+                                <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                                    <li>LLM provider APIs (Anthropic, Google, OpenAI)</li>
+                                    <li>File system access</li>
+                                    <li>Terminal/command execution</li>
+                                    <li>Network connectivity for API calls</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="2-core-architecture" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">2. Core Architecture</h2>
+                    <div class="glass-card p-6">
+                        <h3 class="subsection-title text-xl font-semibold">2.1 Component Hierarchy</h3>
+                        <pre><code class="language-text">┌─────────────────────────────────────────────────────────────┐
+│                    GenericAgent                            │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │              LLMProvider Interface                 │    │
+│  │  ┌─────────────┬─────────────┬─────────────┐       │    │
+│  │  │ Anthropic   │   OpenAI    │   Gemini    │       │    │
+│  │  │ Provider    │ Provider    │ Provider    │       │    │
+│  │  └─────────────┴─────────────┴─────────────┘       │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │                 Tool System                        │    │
+│  │  ┌─────────────┬─────────────┬─────────────┐       │    │
+│  │  │ File Ops    │ Terminal    │ Code Search │       │    │
+│  │  │ Tools       │ Tools       │ Tools       │       │    │
+│  │  └─────────────┴─────────────┴─────────────┘       │    │
+│  └─────────────────────────────────────────────────────┘    │
+│                                                             │
+│  ┌─────────────────────────────────────────────────────┐    │
+│  │            Project Database                        │    │
+│  │  ┌─────────────┬─────────────┬─────────────┐       │    │
+│  │  │ File Store  │ Checkpoints │ MCP Config  │       │    │
+│  │  └─────────────┴─────────────┴─────────────┘       │    │
+│  └─────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────┘</code></pre>
+
+                        <h3 class="subsection-title text-xl font-semibold">2.2 Core Data Structures</h3>
+                        <p class="font-semibold mb-2">Message Flow</p>
+                        <pre><code class="language-go">type Message struct {
+    Role    string      // "user", "assistant", "system", "tool"
+    Content interface{} // string or []ContentBlock
+}
+
+type ContentBlock struct {
+    Type       string      // "text", "tool_use", "tool_result"
+    Text       string
+    ToolUse    *ToolUse
+    ToolResult *ToolResult
+}</code></pre>
+
+                        <p class="font-semibold mb-2">Tool Definition</p>
+                        <pre><code class="language-go">type ToolDefinition struct {
+    Name        string
+    Description string
+    InputSchema anthropic.ToolInputSchemaParam
+    Function    func(input json.RawMessage) (string, error)
+}</code></pre>
+
+                        <h3 class="subsection-title text-xl font-semibold">2.3 Execution Model</h3>
+                        <ol class="list-decimal list-inside space-y-1 text-[var(--muted)]">
+                            <li>Input Reception</li>
+                            <li>Message Processing</li>
+                            <li>Provider Dispatch</li>
+                            <li>Tool Execution</li>
+                            <li>Response Integration</li>
+                            <li>Output Rendering</li>
+                        </ol>
+                    </div>
+                </section>
+
+                <section id="3-provider-abstraction-layer" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">3. Provider Abstraction Layer</h2>
+                    <div class="glass-card p-6">
+                        <h3 class="subsection-title text-xl font-semibold">3.1 Interface Definition</h3>
+                        <pre><code class="language-go">type LLMProvider interface {
+    SendMessage(ctx context.Context, conversation []Message, tools []ToolDefinition) (*LLMResponse, error)
+    Name() string
+    AvailableModels() []string
+}</code></pre>
+
+                        <h3 class="subsection-title text-xl font-semibold">3.2 Provider Implementations</h3>
+                        <ul class="list-disc list-inside text-[var(--muted)] space-y-1 mb-4">
+                            <li><strong>Anthropic</strong>: Claude 3.x family, tool calling, streaming</li>
+                            <li><strong>Gemini</strong>: Function calling, multimodal support</li>
+                            <li><strong>OpenAI</strong>: Interface defined, implementation planned</li>
+                        </ul>
+
+                        <h3 class="subsection-title text-xl font-semibold">3.3 Message Format Conversion</h3>
+                        <p class="text-[var(--muted)]">Each provider implements conversion logic between the generic Message format and provider-specific formats (Anthropic content blocks, Gemini parts, OpenAI chat completions).</p>
+
+                        <h3 class="subsection-title text-xl font-semibold">3.4 Error Handling Strategy</h3>
+                        <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                            <li>API/Network errors normalized</li>
+                            <li>Format/schema validation</li>
+                            <li>Provider-specific mapping</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="4-tool-system-architecture" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">4. Tool System Architecture</h2>
+                    <div class="glass-card p-6">
+                        <h3 class="subsection-title text-xl font-semibold">4.1 Tool Categories</h3>
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <p class="font-semibold mb-2">File System Tools</p>
+                                <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                                    <li>ReadFile, ListFiles, EditFile</li>
+                                    <li>SaveToDatabase</li>
+                                </ul>
+                                <p class="font-semibold mt-4 mb-2">Execution Tools</p>
+                                <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                                    <li>Bash command execution</li>
+                                    <li>APICall, WebScraper</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <p class="font-semibold mb-2">Development Tools</p>
+                                <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                                    <li>CodeSearch, Checkpoints</li>
+                                    <li>BackupProject</li>
+                                </ul>
+                                <p class="font-semibold mt-4 mb-2">Integration Tools</p>
+                                <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                                    <li>MCP Integrations</li>
+                                    <li>Multiplayer Tracking</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <h3 class="subsection-title text-xl font-semibold">4.2 Execution Pipeline</h3>
+                        <pre><code class="language-text">User Request → LLM Processing → Tool Selection → Input Validation → Execution → Result Processing → Response Generation</code></pre>
+                        <p class="text-[var(--muted)]">Includes schema validation, sandboxed execution context, and result normalization.</p>
+                    </div>
+                </section>
+
+                <section id="5-database-and-persistence-layer" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">5. Database and Persistence Layer</h2>
+                    <div class="glass-card p-6">
+                        <h3 class="subsection-title text-xl font-semibold">5.1 Architecture Overview</h3>
+                        <ul class="list-disc list-inside text-[var(--muted)] space-y-1 mb-4">
+                            <li>Version control with hash integrity</li>
+                            <li>Checkpoint-based snapshots</li>
+                            <li>MCP configuration storage</li>
+                        </ul>
+
+                        <h3 class="subsection-title text-xl font-semibold">5.2 Data Structures</h3>
+                        <p class="font-semibold mb-2">ProjectFile</p>
+                        <pre><code class="language-go">type ProjectFile struct {
+    ID int; Path string; Content string; Hash string; Version int;
+    CreatedAt time.Time; ModifiedAt time.Time; IsActive bool
+}</code></pre>
+                        <p class="font-semibold mb-2">Checkpoint</p>
+                        <pre><code class="language-go">type Checkpoint struct {
+    ID int; Name string; Description string; Timestamp time.Time; FileCount int
+}</code></pre>
+                        <p class="font-semibold mb-2">MCPIntegration</p>
+                        <pre><code class="language-go">type MCPIntegration struct {
+    ID int; Name string; Type string; Config map[string]interface{}; CreatedAt time.Time; IsActive bool
+}</code></pre>
+
+                        <h3 class="subsection-title text-xl font-semibold">5.3 Storage Implementation</h3>
+                        <pre><code class="language-text">eve_project_data/
+├── files/
+├── checkpoints/
+├── integrations/
+├── multiplayer/
+└── next_ids.json</code></pre>
+                    </div>
+                </section>
+
+                <section id="6-configuration-management" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">6. Configuration Management</h2>
+                    <div class="glass-card p-6">
+                        <h3 class="subsection-title text-xl font-semibold">6.1 Sources</h3>
+                        <pre><code class="language-bash"># Provider Selection
+LLM_PROVIDER=anthropic|openai|gemini
+
+# API Keys
+ANTHROPIC_API_KEY=sk-ant-api03-...
+OPENAI_API_KEY=sk-...
+GEMINI_API_KEY=...
+
+# Model Selection
+LLM_MODEL=claude-3-5-sonnet-20241022
+
+# System Configuration
+EVE_DATABASE_PATH=./eve_project_data
+EVE_LOG_LEVEL=info|debug|warn|error
+EVE_MAX_WORKERS=10
+EVE_CACHE_SIZE=100MB
+EVE_TIMEOUT=30</code></pre>
+
+                        <h3 class="subsection-title text-xl font-semibold">6.2 Validation</h3>
+                        <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                            <li>Key format checks and connectivity tests</li>
+                            <li>Go version and dependency verification</li>
+                            <li>File system permissions</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="7-execution-flow-and-state-management" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">7. Execution Flow and State Management</h2>
+                    <div class="glass-card p-6">
+                        <h3 class="subsection-title text-xl font-semibold">7.1 Conversation Management</h3>
+                        <pre><code class="language-text">Input → Tokenization → Context Window Management → Provider Dispatch → Response Processing → State Update</code></pre>
+                        <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                            <li>Token counting and message pruning</li>
+                            <li>Summarization and persistence</li>
+                        </ul>
+
+                        <h3 class="subsection-title text-xl font-semibold">7.2 Tool Execution State</h3>
+                        <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                            <li>Request IDs, progress monitoring, timeout management</li>
+                            <li>Retry logic and fallback mechanisms</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="8-error-handling-and-resilience" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">8. Error Handling and Resilience</h2>
+                    <div class="glass-card p-6">
+                        <h3 class="subsection-title text-xl font-semibold">8.1 Classification</h3>
+                        <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                            <li>Provider, tool execution, and system errors</li>
+                        </ul>
+                        <h3 class="subsection-title text-xl font-semibold">8.2 Recovery Strategies</h3>
+                        <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                            <li>Exponential backoff, circuit breaker</li>
+                            <li>Graceful degradation and user notification</li>
+                        </ul>
+                        <h3 class="subsection-title text-xl font-semibold">8.3 Monitoring</h3>
+                        <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                            <li>Health checks, structured logging, rotation</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="9-performance-characteristics" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">9. Performance Characteristics</h2>
+                    <div class="glass-card p-6">
+                        <h3 class="subsection-title text-xl font-semibold">9.1 Latency</h3>
+                        <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                            <li>Providers: Anthropic 2–5s, Gemini 1–3s, OpenAI 1–4s (typical)</li>
+                            <li>Tools: file ops &lt; 100ms, network 100ms–2s</li>
+                        </ul>
+                        <h3 class="subsection-title text-xl font-semibold">9.2 Throughput & Memory</h3>
+                        <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                            <li>Up to 10 concurrent tool executions</li>
+                            <li>~50MB base, +1MB/1000 messages</li>
+                        </ul>
+                        <h3 class="subsection-title text-xl font-semibold">9.3 Scalability</h3>
+                        <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                            <li>Stateless instances, shared storage, load balancing</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="10-security-considerations" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">10. Security Considerations</h2>
+                    <div class="glass-card p-6">
+                        <h3 class="subsection-title text-xl font-semibold">10.1 API Key Management</h3>
+                        <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                            <li>Env var storage; no persistence to disk</li>
+                            <li>TLS 1.3, cert validation, key rotation</li>
+                        </ul>
+                        <h3 class="subsection-title text-xl font-semibold">10.2 File System Security</h3>
+                        <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                            <li>Path validation, permission checking</li>
+                            <li>Optional encryption, integrity checks</li>
+                        </ul>
+                        <h3 class="subsection-title text-xl font-semibold">10.3 Command Execution Security</h3>
+                        <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                            <li>Whitelisting, escaping, isolation, resource limits</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="11-extensibility-framework" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">11. Extensibility Framework</h2>
+                    <div class="glass-card p-6">
+                        <h3 class="subsection-title text-xl font-semibold">11.1 Provider Extension</h3>
+                        <pre><code class="language-go">// Provider registration
+const ProviderNewProvider ProviderType = "newprovider"
+
+// CreateProvider switch case
+case ProviderNewProvider:
+    return NewNewProvider(c.APIKey, c.Model), nil</code></pre>
+
+                        <h3 class="subsection-title text-xl font-semibold">11.2 Tool Extension</h3>
+                        <pre><code class="language-go">var NewToolDefinition = ToolDefinition{
+    Name:        "new_tool",
+    Description: "Description of new tool functionality",
+    InputSchema: GenerateSchema[NewToolInput](),
+    Function:    NewToolFunction,
+}</code></pre>
+
+                        <h3 class="subsection-title text-xl font-semibold">11.3 Integration Points</h3>
+                        <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                            <li>MCP: server discovery and config</li>
+                            <li>Plugin lifecycle and sandboxing</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="12-deployment-and-operations" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">12. Deployment and Operations</h2>
+                    <div class="glass-card p-6">
+                        <h3 class="subsection-title text-xl font-semibold">12.1 Build Process</h3>
+                        <pre><code class="language-bash"># Standard build
+go build -o eve .
+
+# Optimized build
+go build -ldflags="-s -w" -o eve .
+
+# Cross-platform
+GOOS=linux GOARCH=amd64 go build -o eve-linux .
+GOOS=darwin GOARCH=amd64 go build -o eve-mac .
+GOOS=windows GOARCH=amd64 go build -o eve.exe .</code></pre>
+
+                        <h3 class="subsection-title text-xl font-semibold">12.2 Runtime Requirements</h3>
+                        <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                            <li>OS: Linux/macOS/Windows; Arch: x86_64/ARM64</li>
+                            <li>Memory: 4GB min (8GB rec.); Storage: 500MB+</li>
+                            <li>Outbound HTTPS; DNS; firewall 443</li>
+                        </ul>
+
+                        <h3 class="subsection-title text-xl font-semibold">12.3 Monitoring and Observability</h3>
+                        <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                            <li>Performance metrics and provider usage</li>
+                            <li>Structured JSON logs; aggregation</li>
+                        </ul>
+
+                        <h3 class="subsection-title text-xl font-semibold">12.4 Backup and Recovery</h3>
+                        <ul class="list-disc list-inside text-[var(--muted)] space-y-1">
+                            <li>Automated, incremental backups; offsite storage</li>
+                            <li>Disaster recovery and failover support</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="conclusion" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">Conclusion</h2>
+                    <div class="glass-card p-6">
+                        <p class="text-[var(--muted)]">EVE delivers a provider-agnostic, extensible assistant with robust tooling and resilient operations. Use this reference alongside the source code for implementation details and future extensions.</p>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-[var(--bg-800)] border-t border-[var(--border-light)] py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center gap-3 mb-4 md:mb-0">
+                <svg width="32" height="32" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="footerLogoGradient" x1="0" y1="0" x2="250" y2="250" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#EC4899" />
+                            <stop offset="1" stop-color="#8B5CF6" />
+                        </linearGradient>
+                    </defs>
+                    <g class="logo-group">
+                        <path d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="url(#footerLogoGradient)"/>
+                        <path d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="none" stroke="url(#footerLogoGradient)" stroke-width="4"/>
+                    </g>
+                </svg>
+                <div>
+                    <div class="text-lg font-bold gradient-text">EVE</div>
+                    <div class="text-xs text-[var(--muted)]">AI Coding Assistant</div>
+                </div>
+            </div>
+            <div class="text-center md:text-right">
+                <p class="text-[var(--muted)] text-sm">Built with ❤️ for developers by developers</p>
+                <p class="text-[var(--muted)] text-xs mt-1">© 2025 Artifact Virtual. Open source and free.</p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- JavaScript -->
+<script>
+    // Mobile menu
+    const mobileToggle = document.getElementById('mobileToggle');
+    const sidebar = document.getElementById('sidebar');
+    const closeSidebar = document.getElementById('closeSidebar');
+
+    function openMobileMenu() { sidebar.classList.remove('hidden'); setTimeout(() => { sidebar.classList.remove('sidebar'); sidebar.classList.add('open'); }, 10); document.body.style.overflow = 'hidden'; }
+    function closeMobileMenu() { sidebar.classList.remove('open'); sidebar.classList.add('sidebar'); setTimeout(() => { sidebar.classList.add('hidden'); }, 300); document.body.style.overflow = ''; }
+
+    if (mobileToggle) mobileToggle.addEventListener('click', openMobileMenu);
+    if (closeSidebar) closeSidebar.addEventListener('click', closeMobileMenu);
+
+    // Click outside to close
+    if (sidebar) sidebar.addEventListener('click', (e) => { if (e.target === sidebar) { closeMobileMenu(); } });
+
+    // Smooth scroll for nav links
+    document.querySelectorAll('a[href^="#"]').forEach(a => { a.addEventListener('click', (e) => { const href = a.getAttribute('href'); if (href && href.startsWith('#')) { e.preventDefault(); const t = document.querySelector(href); if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' }); } }); });
+
+    // Active link highlight on scroll
+    const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
+    const sections = document.querySelectorAll('.content-section');
+    function updateActiveNavLink() {
+        const y = window.scrollY + 110;
+        sections.forEach(s => {
+            const top = s.offsetTop; const h = s.offsetHeight; const id = s.getAttribute('id');
+            if (y >= top && y < top + h) {
+                navLinks.forEach(l => { l.classList.remove('active'); if (l.getAttribute('href') === `#${id}`) l.classList.add('active'); });
+            }
+        });
+    }
+    window.addEventListener('scroll', updateActiveNavLink); updateActiveNavLink();
+
+    // Header hide on scroll
+    const header = document.getElementById('main-header');
+    let lastScrollY = window.scrollY;
+    window.addEventListener('scroll', () => { const current = window.scrollY; header.style.transform = (current > lastScrollY && current > 100) ? 'translateY(-100%)' : 'translateY(0)'; lastScrollY = current; });
+
+    // Copy button for code blocks
+    document.querySelectorAll('pre').forEach(pre => {
+        const btn = document.createElement('button');
+        btn.innerHTML = '<i class="fas fa-copy"></i>';
+        btn.className = 'copy-button';
+    btn.style.cssText = 'position:absolute;top:8px;right:8px;background:rgba(17,24,39,0.8);border:1px solid var(--border-light);color:var(--muted);padding:4px 8px;cursor:pointer;font-size:12px;transition:all .2s ease;';
+        btn.addEventListener('mouseenter', () => { btn.style.color = 'white'; btn.style.borderColor = 'rgba(255,255,255,0.3)'; });
+        btn.addEventListener('mouseleave', () => { btn.style.color = 'var(--muted)'; btn.style.borderColor = 'var(--border-light)'; });
+        btn.addEventListener('click', () => { const code = pre.querySelector('code'); if (code) { navigator.clipboard.writeText(code.textContent).then(() => { btn.innerHTML = '<i class="fas fa-check"></i>'; btn.style.color = '#10b981'; setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i>'; btn.style.color = 'var(--muted)'; }, 2000); }); } });
+        pre.appendChild(btn);
+    });
+</script>
+
+</body>
+</html>

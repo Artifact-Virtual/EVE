@@ -1,167 +1,302 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>EVE — AI Coding Assistant</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
-  <meta name="description" content="EVE — AI coding assistant for smarter, faster development." />
-  <style>
-    :root{
-      --bg-900:#0b0f12; /* very dark */
-      --bg-800:#111827;
-      --accent-pink:#ec4899;
-      --accent-purple:#8b5cf6;
-      --muted:#94a3b8;
-    }
-    html,body{height:100%;}
-    body{
-      background:linear-gradient(180deg,var(--bg-900),var(--bg-800));
-      color:#ffffff;
-      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
-      -webkit-font-smoothing:antialiased;
-      -moz-osx-font-smoothing:grayscale;
-    }
-    .glass { background: rgba(17,24,39,0.6); border:1px solid rgba(255,255,255,0.04); backdrop-filter: blur(8px); }
-    .glass-2 { background: rgba(17,24,39,0.75); border:1px solid rgba(255,255,255,0.03); backdrop-filter: blur(12px); }
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>EVE — AI Coding Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <meta name="description" content="EVE — AI coding assistant for smarter, faster development." />
+    <style>
+        :root{
+            --bg-900:#0b0f12; /* very dark */
+            --bg-800:#111827;
+            --accent-pink:#ec4899;
+            --accent-purple:#8b5cf6;
+            --muted:#94a3b8;
+        }
+        html,body{height:100%;}
+        body{
+            background:linear-gradient(180deg,var(--bg-900),var(--bg-800));
+            color:#ffffff;
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+            -webkit-font-smoothing:antialiased;
+            -moz-osx-font-smoothing:grayscale;
+        }
+        .glass { background: rgba(17,24,39,0.6); border:1px solid rgba(255,255,255,0.04); backdrop-filter: blur(8px); }
+        .glass-2 { background: rgba(17,24,39,0.75); border:1px solid rgba(255,255,255,0.03); backdrop-filter: blur(12px); }
 
-    /* Hero animations */
-    .hero-orb{ width:260px; height:260px; border-radius:40%; position:relative; overflow:visible; }
-    .orb-layer{ position:absolute; inset:0; border-radius:inherit; filter: blur(28px) saturate(140%); transform-origin:center; }
-    .orb-1{ background: radial-gradient(circle at 30% 20%, rgba(236,72,153,0.18), transparent 20%), radial-gradient(circle at 80% 80%, rgba(139,92,246,0.14), transparent 25%); animation: orbMove 12s ease-in-out infinite; }
-    .orb-2{ background: linear-gradient(135deg, rgba(139,92,246,0.06), rgba(236,72,153,0.04)); transform: scale(1.08); animation: orbScale 10s ease-in-out infinite; }
-    @keyframes orbMove { 0%{transform: translateY(0) rotate(0);} 50%{transform: translateY(-12px) rotate(12deg);} 100%{transform: translateY(0) rotate(0);} }
-    @keyframes orbScale{0%{transform:scale(1.02);}50%{transform:scale(1);}100%{transform:scale(1.02);} }
+        /* EVE Demo Animation Styles */
+        .eve-demo {
+            position: relative;
+            font-family: 'JetBrains Mono', monospace;
+            background: rgba(17,24,39,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1rem;
+            overflow: hidden;
+            max-width: 480px;
+        }
+        .demo-header {
+            background: rgba(17,24,39,0.9);
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .demo-content {
+            padding: 1rem;
+            min-height: 300px;
+        }
+        .demo-line {
+            line-height: 1.6;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            transform: translateY(10px);
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        .demo-prompt {
+            color: #ec4899;
+        }
+        .demo-command {
+            color: #8b5cf6;
+        }
+        .demo-output {
+            color: #10b981;
+        }
+        .demo-suggestion {
+            color: #06b6d4;
+            padding-left: 1rem;
+        }
+        .demo-success {
+            color: #f59e0b;
+        }
+        .typing-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: #ec4899;
+            animation: blink 1s infinite;
+            margin-left: 2px;
+        }
+        .typing-cursor.hidden {
+            display: none;
+        }
+        
+        /* Keyframes */
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(10px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
 
-    /* code lines animation */
-    .code-line{ opacity:0.2; transform:translateX(-8px); animation: codeFade 4s linear infinite; }
-    .code-line:nth-child(2){ animation-delay:0.6s; }
-    .code-line:nth-child(3){ animation-delay:1.2s; }
-    .code-line:nth-child(4){ animation-delay:1.8s; }
-    .code-line:nth-child(5){ animation-delay:2.4s; }
-    @keyframes codeFade{ 0%{opacity:0; transform:translateX(-8px);}10%{opacity:1; transform:translateX(0);}70%{opacity:1;}100%{opacity:0; transform:translateX(8px);} }
+        /* Subtle focus ring helper */
+        .focus-ring:focus{ outline:2px solid rgba(236,72,153,0.14); outline-offset:3px; }
 
-    /* subtle focus ring helper */
-    .focus-ring:focus{ outline:2px solid rgba(236,72,153,0.14); outline-offset:3px; }
-
-    /* responsive tweaks */
-    @media (max-width:768px){ .hero-orb{ width:200px; height:200px; } }
-  </style>
+        /* responsive tweaks */
+        @media (max-width:768px){ 
+            .code-container { padding: 1rem; }
+            .hero-text { font-size: 3rem; }
+        }
+    </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
-  <!-- Header -->
-  <header class="w-full glass py-4">
-    <div class="max-w-6xl mx-auto px-6 flex items-center justify-between">
-      <a href="#home" class="flex items-center gap-3">
-        <div class="w-9 h-9 bg-gradient-to-br from-[var(--accent-pink)] to-[var(--accent-purple)] rounded-md flex items-center justify-center">
-          <i class="fas fa-atom text-white"></i>
-        </div>
-        <span class="text-lg font-semibold">EVE</span>
-      </a>
-      <nav class="hidden md:flex items-center gap-8 text-sm text-[var(--muted)]">
-        <a href="#features" class="hover:text-white transition">Features</a>
-        <a href="#pricing" class="hover:text-white transition">Pricing</a>
-        <a href="#docs" class="hover:text-white transition">Docs</a>
-        <a href="#contact" class="hover:text-white transition">Contact</a>
-      </nav>
-      <div class="hidden md:flex gap-4">
-        <a href="#signin" class="text-sm text-[var(--muted)] hover:text-white transition">Sign in</a>
-        <a href="#getstarted" class="inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold bg-gradient-to-r from-[var(--accent-pink)] to-[var(--accent-purple)] shadow-lg hover:scale-[1.02] transition-transform">Get started</a>
-      </div>
-      <button id="mobileToggle" class="md:hidden p-2 text-[var(--muted)]"> <i class="fas fa-bars"></i> </button>
-    </div>
-  </header>
-
-  <!-- Hero -->
-  <main id="home" class="flex-1 flex items-center">
-    <div class="max-w-6xl mx-auto px-6 py-20 grid lg:grid-cols-2 gap-12 items-center">
-
-      <!-- Left: text -->
-      <div>
-        <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6">
-          Code with <span class="bg-clip-text text-transparent bg-gradient-to-r from-[var(--accent-pink)] to-[var(--accent-purple)]">Clarity</span>.
-        </h1>
-        <p class="text-lg text-[var(--muted)] max-w-xl mb-8">EVE is an AI-first coding assistant that understands context, reduces toil, and helps you ship better code faster — integrated for CLI and web workflows.</p>
-
-        <div class="flex flex-wrap gap-4">
-          <a href="#getstarted" class="inline-flex items-center gap-3 px-5 py-3 bg-gradient-to-r from-[var(--accent-pink)] to-[var(--accent-purple)] rounded-md font-medium shadow">Start building <i class="fas fa-arrow-right"></i></a>
-          <a href="#docs" class="inline-flex items-center gap-3 px-5 py-3 rounded-md bg-transparent border border-gray-700 text-[var(--muted)] hover:text-white hover:border-gray-600">Read docs</a>
-        </div>
-      </div>
-
-      <!-- Right: animated demo orb + code lines -->
-      <div class="flex items-center justify-center lg:justify-end">
-        <div class="relative">
-          <div class="hero-orb">
-            <div class="orb-layer orb-1"></div>
-            <div class="orb-layer orb-2"></div>
-          </div>
-
-          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div class="glass-2 rounded-2xl p-6 w-[360px] max-w-full">
-              <div class="flex items-center gap-3 mb-4">
-                <div class="w-3 h-3 bg-red-500 rounded-full"></div>
-                <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                <div class="ml-auto text-xs text-[var(--muted)] font-mono">eve-cli</div>
-              </div>
-
-              <div class="font-mono text-sm space-y-2 text-[var(--muted)]">
-                <div class="code-line text-[rgba(236,72,153,0.95)]">$ eve analyze --file app.js</div>
-                <div class="code-line text-green-400">✓ Analyzing files...</div>
-                <div class="code-line text-sky-400">💡 4 suggestions found</div>
-                <div class="code-line text-purple-300">⚡  Performance +38%</div>
-                <div class="code-line text-pink-300">✨ Quality: A+</div>
-              </div>
+    <!-- Header -->
+    <header class="w-full glass py-4">
+        <div class="max-w-6xl mx-auto px-6 flex items-center justify-between">
+            <a href="#home" class="flex items-center gap-3">
+                <!-- New SVG Logo -->
+                <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12.9158 10.3708C12.3958 10.0211 11.5833 10.0211 11.0633 10.3708L2.09459 16.4862C1.5746 16.8359 1.5746 17.5843 2.09459 17.934L11.0633 24.0494C11.5833 24.3991 12.3958 24.3991 12.9158 24.0494L21.8845 17.934C22.4045 17.5843 22.4045 16.8359 21.8845 16.4862L12.9158 10.3708Z" fill="url(#paint0_linear)"/>
+                    <path d="M23.9054 11.0694L14.9366 17.1848C14.4166 17.5345 14.4166 18.2829 14.9366 18.6326L23.9054 24.748C24.4254 25.0977 25.2379 25.0977 25.7578 24.748L34.7266 18.6326C35.2466 18.2829 35.2466 17.5345 34.7266 17.1848L25.7578 11.0694C25.2379 10.7197 24.4254 10.7197 23.9054 11.0694Z" fill="url(#paint1_linear)"/>
+                    <path d="M22.993 11.3971L14.3916 17.2652C14.0044 17.5323 14.0044 18.0673 14.3916 18.3344L22.993 24.2025C23.3802 24.4696 23.9932 24.4696 24.3804 24.2025L32.9818 18.3344C33.369 18.0673 33.369 17.5323 32.9818 17.2652L24.3804 11.3971C23.9932 11.1299 23.3802 11.1299 22.993 11.3971Z" fill="#3B82F6"/>
+                    <path d="M12.9158 10.3708C12.3958 10.0211 11.5833 10.0211 11.0633 10.3708L2.09459 16.4862C1.5746 16.8359 1.5746 17.5843 2.09459 17.934L11.0633 24.0494C11.5833 24.3991 12.3958 24.3991 12.9158 24.0494L21.8845 17.934C22.4045 17.5843 22.4045 16.8359 21.8845 16.4862L12.9158 10.3708Z" fill="url(#paint0_linear)"/>
+                    <path d="M23.9054 11.0694L14.9366 17.1848C14.4166 17.5345 14.4166 18.2829 14.9366 18.6326L23.9054 24.748C24.4254 25.0977 25.2379 25.0977 25.7578 24.748L34.7266 18.6326C35.2466 18.2829 35.2466 17.5345 34.7266 17.1848L25.7578 11.0694C25.2379 10.7197 24.4254 10.7197 23.9054 11.0694Z" fill="url(#paint1_linear)"/>
+                    <defs>
+                        <linearGradient id="paint0_linear" x1="12.0163" y1="10.8715" x2="12.0163" y2="23.5484" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#EC4899"/>
+                            <stop offset="1" stop-color="#8B5CF6"/>
+                        </linearGradient>
+                        <linearGradient id="paint1_linear" x1="24.965" y1="11.5699" x2="24.965" y2="24.2468" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#8B5CF6"/>
+                            <stop offset="1" stop-color="#EC4899"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <span class="text-lg font-semibold">EVE</span>
+            </a>
+            <nav class="hidden md:flex items-center gap-8 text-sm text-[var(--muted)]">
+                <a href="#features" class="hover:text-white transition">Features</a>
+                <a href="#pricing" class="hover:text-white transition">Pricing</a>
+                <a href="#docs" class="hover:text-white transition">Docs</a>
+                <a href="#contact" class="hover:text-white transition">Contact</a>
+            </nav>
+            <div class="hidden md:flex gap-4">
+                <a href="#signin" class="text-sm text-[var(--muted)] hover:text-white transition">Sign in</a>
+                <a href="#getstarted" class="inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold bg-gradient-to-r from-[var(--accent-pink)] to-[var(--accent-purple)] shadow-lg hover:scale-[1.02] transition-transform">Get started</a>
             </div>
-          </div>
+            <button id="mobileToggle" class="md:hidden p-2 text-[var(--muted)]" title="Open navigation menu" aria-label="Open navigation menu"> <i class="fas fa-bars"></i> </button>
         </div>
-      </div>
+    </header>
 
-    </div>
-  </main>
+    <!-- Hero -->
+    <main id="home" class="flex-1 flex items-center">
+        <div class="max-w-6xl mx-auto px-6 py-20 grid lg:grid-cols-2 gap-12 items-center">
 
-  <!-- Minimal features and footer -->
-  <section id="features" class="py-16">
-    <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-6">
-      <div class="glass p-6 rounded-lg">
-        <h3 class="font-semibold mb-2">Smart Analysis</h3>
-        <p class="text-[var(--muted)] text-sm">Context aware suggestions, refactor hints, and security checks.</p>
-      </div>
-      <div class="glass p-6 rounded-lg">
-        <h3 class="font-semibold mb-2">Fast Feedback</h3>
-        <p class="text-[var(--muted)] text-sm">Millisecond-grade responses for interactive workflows.</p>
-      </div>
-      <div class="glass p-6 rounded-lg">
-        <h3 class="font-semibold mb-2">Private by default</h3>
-        <p class="text-[var(--muted)] text-sm">Local-first options, encryption, and controls for teams.</p>
-      </div>
-    </div>
-  </section>
+            <!-- Left: text -->
+            <div>
+                <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 hero-text">
+                    Code with <span class="bg-clip-text text-transparent bg-gradient-to-r from-[var(--accent-pink)] to-[var(--accent-purple)]">Clarity</span>.
+                </h1>
+                <p class="text-lg text-[var(--muted)] max-w-xl mb-8">EVE is an AI-first coding assistant that understands context, reduces toil, and helps you ship better code faster — integrated for CLI and web workflows.</p>
 
-  <footer class="py-10 border-t border-gray-800">
-    <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
-      <div class="flex items-center gap-3">
-        <div class="w-8 h-8 bg-gradient-to-br from-[var(--accent-pink)] to-[var(--accent-purple)] rounded-md flex items-center justify-center"><i class="fas fa-atom"></i></div>
-        <div>
-          <div class="font-semibold">EVE</div>
-          <div class="text-xs text-[var(--muted)]">© 2025 EVE Project Contributors</div>
+                <div class="flex flex-wrap gap-4">
+                    <a href="#getstarted" class="inline-flex items-center gap-3 px-5 py-3 bg-gradient-to-r from-[var(--accent-pink)] to-[var(--accent-purple)] rounded-md font-medium shadow">Start building <i class="fas fa-arrow-right"></i></a>
+                    <a href="#docs" class="inline-flex items-center gap-3 px-5 py-3 rounded-md bg-transparent border border-gray-700 text-[var(--muted)] hover:text-white hover:border-gray-600">Read docs</a>
+                </div>
+            </div>
+
+            <!-- Right: EVE Demo Animation -->
+            <div class="flex items-center justify-center lg:justify-end">
+                <div class="eve-demo">
+                    <!-- Terminal Header -->
+                    <div class="demo-header">
+                        <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                        <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                        <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                        <div class="ml-auto text-xs text-gray-400">eve-cli</div>
+                    </div>
+                    
+                    <!-- Demo Content -->
+                    <div class="demo-content">
+                        <div id="demoContainer" class="text-sm">
+                            <!-- Lines will be added here by JavaScript -->
+                        </div>
+                        <div id="typingCursor" class="typing-cursor hidden"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
+    </main>
 
-      <div class="text-sm text-[var(--muted)]">Built for developers • CLI + Web • Privacy-first</div>
-    </div>
-  </footer>
+    <!-- Minimal features and footer -->
+    <section id="features" class="py-16">
+        <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-6">
+            <div class="glass p-6 rounded-lg">
+                <h3 class="font-semibold mb-2">Smart Analysis</h3>
+                <p class="text-[var(--muted)] text-sm">Context aware suggestions, refactor hints, and security checks.</p>
+            </div>
+            <div class="glass p-6 rounded-lg">
+                <h3 class="font-semibold mb-2">Fast Feedback</h3>
+                <p class="text-[var(--muted)] text-sm">Millisecond-grade responses for interactive workflows.</p>
+            </div>
+            <div class="glass p-6 rounded-lg">
+                <h3 class="font-semibold mb-2">Private by default</h3>
+                <p class="text-[var(--muted)] text-sm">Local-first options, encryption, and controls for teams.</p>
+            </div>
+        </div>
+    </section>
 
-  <script>
-    // Mobile toggle (minimal)
-    document.getElementById('mobileToggle')?.addEventListener('click', ()=>{ alert('Open mobile nav'); });
-  </script>
+    <footer class="py-10 border-t border-gray-800">
+        <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <!-- New SVG Logo -->
+                <svg width="32" height="32" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12.9158 10.3708C12.3958 10.0211 11.5833 10.0211 11.0633 10.3708L2.09459 16.4862C1.5746 16.8359 1.5746 17.5843 2.09459 17.934L11.0633 24.0494C11.5833 24.3991 12.3958 24.3991 12.9158 24.0494L21.8845 17.934C22.4045 17.5843 22.4045 16.8359 21.8845 16.4862L12.9158 10.3708Z" fill="url(#paint0_linear)"/>
+                    <path d="M23.9054 11.0694L14.9366 17.1848C14.4166 17.5345 14.4166 18.2829 14.9366 18.6326L23.9054 24.748C24.4254 25.0977 25.2379 25.0977 25.7578 24.748L34.7266 18.6326C35.2466 18.2829 35.2466 17.5345 34.7266 17.1848L25.7578 11.0694C25.2379 10.7197 24.4254 10.7197 23.9054 11.0694Z" fill="url(#paint1_linear)"/>
+                    <path d="M22.993 11.3971L14.3916 17.2652C14.0044 17.5323 14.0044 18.0673 14.3916 18.3344L22.993 24.2025C23.3802 24.4696 23.9932 24.4696 24.3804 24.2025L32.9818 18.3344C33.369 18.0673 33.369 17.5323 32.9818 17.2652L24.3804 11.3971C23.9932 11.1299 23.3802 11.1299 22.993 11.3971Z" fill="#3B82F6"/>
+                    <path d="M12.9158 10.3708C12.3958 10.0211 11.5833 10.0211 11.0633 10.3708L2.09459 16.4862C1.5746 16.8359 1.5746 17.5843 2.09459 17.934L11.0633 24.0494C11.5833 24.3991 12.3958 24.3991 12.9158 24.0494L21.8845 17.934C22.4045 17.5843 22.4045 16.8359 21.8845 16.4862L12.9158 10.3708Z" fill="url(#paint0_linear)"/>
+                    <path d="M23.9054 11.0694L14.9366 17.1848C14.4166 17.5345 14.4166 18.2829 14.9366 18.6326L23.9054 24.748C24.4254 25.0977 25.2379 25.0977 25.7578 24.748L34.7266 18.6326C35.2466 18.2829 35.2466 17.5345 34.7266 17.1848L25.7578 11.0694C25.2379 10.7197 24.4254 10.7197 23.9054 11.0694Z" fill="url(#paint1_linear)"/>
+                    <defs>
+                        <linearGradient id="paint0_linear" x1="12.0163" y1="10.8715" x2="12.0163" y2="23.5484" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#EC4899"/>
+                            <stop offset="1" stop-color="#8B5CF6"/>
+                        </linearGradient>
+                        <linearGradient id="paint1_linear" x1="24.965" y1="11.5699" x2="24.965" y2="24.2468" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#8B5CF6"/>
+                            <stop offset="1" stop-color="#EC4899"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <div>
+                    <div class="font-semibold">EVE</div>
+                    <div class="text-xs text-[var(--muted)]">© 2025 EVE Project Contributors</div>
+                </div>
+            </div>
 
+            <div class="text-sm text-[var(--muted)]">Built for developers • CLI + Web • Privacy-first</div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById('mobileToggle')?.addEventListener('click', () => { 
+            // In a real application, you'd show a modal or mobile menu here.
+            console.log('Open mobile nav');
+        });
+
+        // EVE Demo Animation Script
+        document.addEventListener('DOMContentLoaded', () => {
+            const demoContainer = document.getElementById('demoContainer');
+            const cursor = document.getElementById('typingCursor');
+
+            const demoSequence = [
+                { text: '$ eve analyze main.go', class: 'demo-prompt', delay: 1000 },
+                { text: '🔍 Analyzing Go code...', class: 'demo-output', delay: 800 },
+                { text: '✨ Found 3 optimization opportunities', class: 'demo-output', delay: 1200 },
+                { text: '', class: '', delay: 500 },
+                { text: '$ eve suggest "improve error handling"', class: 'demo-prompt', delay: 1000 },
+                { text: '💡 EVE suggests:', class: 'demo-output', delay: 600 },
+                { text: '  • Add proper error wrapping', class: 'demo-suggestion', delay: 800 },
+                { text: '  • Use fmt.Errorf for context', class: 'demo-suggestion', delay: 800 },
+                { text: '  • Add error logging', class: 'demo-suggestion', delay: 800 },
+                { text: '', class: '', delay: 500 },
+                { text: '$ eve edit --apply-suggestions', class: 'demo-prompt', delay: 1000 },
+                { text: '⚡ Applying improvements...', class: 'demo-output', delay: 1000 },
+                { text: '✅ Code updated successfully!', class: 'demo-success', delay: 800 },
+                { text: '📊 Performance: +15% | Quality: A+', class: 'demo-success', delay: 1000 }
+            ];
+
+            let currentStep = 0;
+
+            const typeStep = () => {
+                if (currentStep >= demoSequence.length) {
+                    // Reset animation after a pause
+                    setTimeout(() => {
+                        demoContainer.innerHTML = '';
+                        currentStep = 0;
+                        typeStep();
+                    }, 3000);
+                    return;
+                }
+
+                const step = demoSequence[currentStep];
+                const line = document.createElement('div');
+                line.className = `demo-line ${step.class}`;
+                line.style.animationDelay = '0s';
+                line.textContent = step.text;
+                
+                demoContainer.appendChild(line);
+                currentStep++;
+
+                setTimeout(typeStep, step.delay);
+            };
+
+            // Start the demo animation
+            setTimeout(typeStep, 1000);
+        });
+    </script>
 </body>
 </html>

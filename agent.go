@@ -22,7 +22,11 @@ type GenericAgent struct {
 	getUserMessage func() (string, bool)
 	tools          []ToolDefinition
 	verbose        bool
+	database       *ProjectDatabase
 }
+
+// Global database instance
+var globalDB *ProjectDatabase
 
 func NewGenericAgent(
 	provider LLMProvider,
@@ -35,6 +39,7 @@ func NewGenericAgent(
 		getUserMessage: getUserMessage,
 		tools:          tools,
 		verbose:        verbose,
+		database:       globalDB,
 	}
 }
 
@@ -114,6 +119,222 @@ var WebScraperDefinition = ToolDefinition{
 	Description: "Scrape text from a webpage using a CSS selector.",
 	InputSchema: WebScraperInputSchema,
 	Function:    WebScraper,
+}
+
+// Database tool definitions
+type SaveToDatabaseInput struct {
+	Path    string `json:"path" jsonschema_description:"File path to save"`
+	Content string `json:"content" jsonschema_description:"File content to save"`
+}
+
+var SaveToDatabaseInputSchema = GenerateSchema[SaveToDatabaseInput]()
+
+func SaveToDatabase(input json.RawMessage) (string, error) {
+	var dbInput SaveToDatabaseInput
+	if err := json.Unmarshal(input, &dbInput); err != nil {
+		return "", fmt.Errorf("failed to parse input: %w", err)
+	}
+
+	// Calculate simple hash for content
+	hash := fmt.Sprintf("%x", len(dbInput.Content))
+
+	// Save to database
+	if globalDB != nil {
+		if err := globalDB.SaveFile(dbInput.Path, dbInput.Content, hash); err != nil {
+			return "", fmt.Errorf("failed to save to database: %w", err)
+		}
+		return fmt.Sprintf("Successfully saved file '%s' to database", dbInput.Path), nil
+	}
+
+	return "", fmt.Errorf("database not initialized")
+}
+
+var SaveToDatabaseDefinition = ToolDefinition{
+	Name:        "save_to_database",
+	Description: "Save a file to the project database for version control and backup.",
+	InputSchema: SaveToDatabaseInputSchema,
+	Function:    SaveToDatabase,
+}
+
+type CreateCheckpointInput struct {
+	Name        string `json:"name" jsonschema_description:"Name of the checkpoint"`
+	Description string `json:"description" jsonschema_description:"Description of the checkpoint"`
+}
+
+var CreateCheckpointInputSchema = GenerateSchema[CreateCheckpointInput]()
+
+func CreateCheckpoint(input json.RawMessage) (string, error) {
+	var cpInput CreateCheckpointInput
+	if err := json.Unmarshal(input, &cpInput); err != nil {
+		return "", fmt.Errorf("failed to parse input: %w", err)
+	}
+
+	if globalDB != nil {
+		if err := globalDB.CreateCheckpoint(cpInput.Name, cpInput.Description); err != nil {
+			return "", fmt.Errorf("failed to create checkpoint: %w", err)
+		}
+		return fmt.Sprintf("Successfully created checkpoint '%s'", cpInput.Name), nil
+	}
+
+	return "", fmt.Errorf("database not initialized")
+}
+
+var CreateCheckpointDefinition = ToolDefinition{
+	Name:        "create_checkpoint",
+	Description: "Create a checkpoint (snapshot) of the current project state.",
+	InputSchema: CreateCheckpointInputSchema,
+	Function:    CreateCheckpoint,
+}
+
+type RestoreCheckpointInput struct {
+	CheckpointID int `json:"checkpoint_id" jsonschema_description:"ID of the checkpoint to restore"`
+}
+
+var RestoreCheckpointInputSchema = GenerateSchema[RestoreCheckpointInput]()
+
+func RestoreCheckpoint(input json.RawMessage) (string, error) {
+	var cpInput RestoreCheckpointInput
+	if err := json.Unmarshal(input, &cpInput); err != nil {
+		return "", fmt.Errorf("failed to parse input: %w", err)
+	}
+
+	if globalDB != nil {
+		if err := globalDB.RestoreCheckpoint(cpInput.CheckpointID); err != nil {
+			return "", fmt.Errorf("failed to restore checkpoint: %w", err)
+		}
+		return fmt.Sprintf("Successfully restored checkpoint %d", cpInput.CheckpointID), nil
+	}
+
+	return "", fmt.Errorf("database not initialized")
+}
+
+var RestoreCheckpointDefinition = ToolDefinition{
+	Name:        "restore_checkpoint",
+	Description: "Restore project to a previous checkpoint state.",
+	InputSchema: RestoreCheckpointInputSchema,
+	Function:    RestoreCheckpoint,
+}
+
+type ListCheckpointsInput struct{}
+
+var ListCheckpointsInputSchema = GenerateSchema[ListCheckpointsInput]()
+
+func ListCheckpoints(input json.RawMessage) (string, error) {
+	if globalDB != nil {
+		checkpoints, err := globalDB.ListCheckpoints()
+		if err != nil {
+			return "", fmt.Errorf("failed to list checkpoints: %w", err)
+		}
+
+		result := "Available Checkpoints:\n"
+		for _, cp := range checkpoints {
+			result += fmt.Sprintf("- ID: %d, Name: %s, Description: %s, Files: %d, Time: %s\n",
+				cp.ID, cp.Name, cp.Description, cp.FileCount, cp.Timestamp.Format("2006-01-02 15:04:05"))
+		}
+		return result, nil
+	}
+
+	return "", fmt.Errorf("database not initialized")
+}
+
+var ListCheckpointsDefinition = ToolDefinition{
+	Name:        "list_checkpoints",
+	Description: "List all available project checkpoints.",
+	InputSchema: ListCheckpointsInputSchema,
+	Function:    ListCheckpoints,
+}
+
+type MCPIntegrationInput struct {
+	Name      string `json:"name" jsonschema_description:"Name of the MCP integration"`
+	Endpoint  string `json:"endpoint" jsonschema_description:"MCP server endpoint URL"`
+	AuthToken string `json:"auth_token,omitempty" jsonschema_description:"Authentication token for MCP server"`
+	Config    string `json:"config,omitempty" jsonschema_description:"Additional configuration JSON"`
+}
+
+var MCPIntegrationInputSchema = GenerateSchema[MCPIntegrationInput]()
+
+func AddMCPIntegration(input json.RawMessage) (string, error) {
+	var mcpInput MCPIntegrationInput
+	if err := json.Unmarshal(input, &mcpInput); err != nil {
+		return "", fmt.Errorf("failed to parse input: %w", err)
+	}
+
+	if globalDB != nil {
+		if err := globalDB.AddMCPIntegration(mcpInput.Name, mcpInput.Endpoint, mcpInput.AuthToken, mcpInput.Config); err != nil {
+			return "", fmt.Errorf("failed to add MCP integration: %w", err)
+		}
+		return fmt.Sprintf("Successfully added MCP integration '%s'", mcpInput.Name), nil
+	}
+
+	return "", fmt.Errorf("database not initialized")
+}
+
+var AddMCPIntegrationDefinition = ToolDefinition{
+	Name:        "add_mcp_integration",
+	Description: "Add a new MCP (Model Context Protocol) server integration.",
+	InputSchema: MCPIntegrationInputSchema,
+	Function:    AddMCPIntegration,
+}
+
+type MultiplayerActionInput struct {
+	SessionID string `json:"session_id" jsonschema_description:"Multiplayer session ID"`
+	UserID    string `json:"user_id" jsonschema_description:"User identifier"`
+	Action    string `json:"action" jsonschema_description:"Action performed"`
+	Data      string `json:"data" jsonschema_description:"Action data"`
+}
+
+var MultiplayerActionInputSchema = GenerateSchema[MultiplayerActionInput]()
+
+func RecordMultiplayerAction(input json.RawMessage) (string, error) {
+	var mpInput MultiplayerActionInput
+	if err := json.Unmarshal(input, &mpInput); err != nil {
+		return "", fmt.Errorf("failed to parse input: %w", err)
+	}
+
+	if globalDB != nil {
+		if err := globalDB.RecordMultiplayerAction(mpInput.SessionID, mpInput.UserID, mpInput.Action, mpInput.Data); err != nil {
+			return "", fmt.Errorf("failed to record multiplayer action: %w", err)
+		}
+		return fmt.Sprintf("Recorded multiplayer action: %s by %s", mpInput.Action, mpInput.UserID), nil
+	}
+
+	return "", fmt.Errorf("database not initialized")
+}
+
+var RecordMultiplayerActionDefinition = ToolDefinition{
+	Name:        "record_multiplayer_action",
+	Description: "Record a multiplayer session action for collaboration tracking.",
+	InputSchema: MultiplayerActionInputSchema,
+	Function:    RecordMultiplayerAction,
+}
+
+type BackupProjectInput struct {
+	Path string `json:"path" jsonschema_description:"Path where to save the backup file"`
+}
+
+var BackupProjectInputSchema = GenerateSchema[BackupProjectInput]()
+
+func BackupProject(input json.RawMessage) (string, error) {
+	var backupInput BackupProjectInput
+	if err := json.Unmarshal(input, &backupInput); err != nil {
+		return "", fmt.Errorf("failed to parse input: %w", err)
+	}
+
+	if globalDB != nil {
+		if err := globalDB.BackupProject(backupInput.Path); err != nil {
+			return "", fmt.Errorf("failed to backup project: %w", err)
+		}
+		return fmt.Sprintf("Successfully backed up project to '%s'", backupInput.Path), nil
+	}
+
+	return "", fmt.Errorf("database not initialized")
+}
+
+var BackupProjectDefinition = ToolDefinition{
+	Name:        "backup_project",
+	Description: "Create a full backup of the project including all files and checkpoints.",
+	InputSchema: BackupProjectInputSchema,
+	Function:    BackupProject,
 }
 
 func (a *GenericAgent) Run(ctx context.Context) error {
@@ -332,6 +553,24 @@ func main() {
 		log.SetPrefix("")
 	}
 
+	// Initialize database
+	dbPath := "eve_project.db"
+	db, err := NewProjectDatabase(dbPath)
+	if err != nil {
+		fmt.Printf("Database initialization error: %s\n", err.Error())
+		if *verbose {
+			log.Printf("Failed to initialize database at %s: %v", dbPath, err)
+		}
+		// Continue without database - tools will handle gracefully
+		globalDB = nil
+	} else {
+		globalDB = db
+		if *verbose {
+			log.Printf("Database initialized successfully at %s", dbPath)
+		}
+		defer db.Close()
+	}
+
 	// Load configuration
 	config, err := NewConfigFromEnv()
 	if err != nil {
@@ -342,6 +581,9 @@ func main() {
 		fmt.Println("  For Gemini: GEMINI_API_KEY")
 		fmt.Println("  Optional: LLM_PROVIDER (anthropic, openai, gemini)")
 		fmt.Println("  Optional: LLM_MODEL (specific model name)")
+		if globalDB != nil {
+			globalDB.Close()
+		}
 		os.Exit(1)
 	}
 
@@ -349,6 +591,9 @@ func main() {
 	provider, err := config.CreateProvider()
 	if err != nil {
 		fmt.Printf("Provider creation error: %s\n", err.Error())
+		if globalDB != nil {
+			globalDB.Close()
+		}
 		os.Exit(1)
 	}
 
@@ -364,7 +609,7 @@ func main() {
 		return scanner.Text(), true
 	}
 
-	// Define tools (same as before)
+	// Define tools with database integration
 	tools := []ToolDefinition{
 		ReadFileDefinition,
 		ListFilesDefinition,
@@ -373,6 +618,13 @@ func main() {
 		CodeSearchDefinition,
 		APICallDefinition,
 		WebScraperDefinition,
+		SaveToDatabaseDefinition,
+		CreateCheckpointDefinition,
+		RestoreCheckpointDefinition,
+		ListCheckpointsDefinition,
+		AddMCPIntegrationDefinition,
+		RecordMultiplayerActionDefinition,
+		BackupProjectDefinition,
 	}
 
 	if *verbose {
@@ -383,5 +635,13 @@ func main() {
 	err = agent.Run(context.TODO())
 	if err != nil {
 		fmt.Printf("Error: %s\n", err.Error())
+		if globalDB != nil {
+			globalDB.Close()
+		}
+		os.Exit(1)
+	}
+
+	if globalDB != nil {
+		globalDB.Close()
 	}
 }

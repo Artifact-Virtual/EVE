@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EVE - Your AI Coding Assistant</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  .font-inter { font-family: 'Inter', sans-serif; }
+  .animated-gradient {
+    background-size: 200% 200%;
+    background-image: linear-gradient(45deg, #fbcfe8, #e9d5ff, #c7d2fe, #a5b4fc);
+    animation: gradient-animation 15s ease infinite;
+  }
+  @keyframes gradient-animation {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(192, 132, 252, 0.5); /* purple-400 with opacity */
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(168, 85, 247, 0.7); /* purple-500 with opacity */
+  }
+</style>
+</head>
+<body class="antialiased font-inter">
+  <main class="w-full h-screen animated-gradient flex flex-col">
+    <header class="w-full p-4 bg-white/20 backdrop-blur-lg shadow-lg z-10 border-b border-white/30">
+      <div class="max-w-4xl mx-auto flex items-center">
+        <i class="fas fa-laptop-code text-2xl text-violet-600"></i>
+        <h1 class="text-xl font-bold ml-3 text-gray-800">EVE</h1>
+      </div>
+    </header>
+    
+    <div class="flex-grow flex items-center justify-center p-4 md:p-8">
+      <div class="w-full max-w-lg bg-white/30 backdrop-blur-xl rounded-2xl shadow-2xl p-8 text-center border border-white/40">
+        <i class="fas fa-sparkles text-5xl text-pink-500 mb-4"></i>
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Supercharge Your Workflow</h2>
+        <p class="text-gray-700 mb-8">
+          Meet EVE, your personal AI coding assistant. Designed with a beautiful and intuitive interface to help you write better code, faster.
+        </p>
+        <button class="h-12 px-8 bg-gradient-to-br from-pink-500 to-violet-500 text-white rounded-full inline-flex items-center justify-center hover:from-pink-600 hover:to-violet-600 transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 shadow-lg">
+          Get Started Now
+        </button>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

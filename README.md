@@ -7,9 +7,7 @@
 <div style="background: linear-gradient(135deg, #D291BC 0%, #B38CB4 50%, #A3A1FF 100%); padding: 20px; text-align: center; margin-bottom: 20px; border-radius: 10px;">
   <h1 style="color: white; margin: 0; font-size: 3em; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);"> e🌷e </h1>
   <p style="color: white; margin: 10px 0 0 0; font-size: 1.2em; opacity: 0.9;">Multi-Provider AI Coding Assistant with Advanced Tool Integration</p>
-</div>
 
-<div align="center">
 
 [![Go Version](https://img.shields.io/badge/Go-1.24.2+-00ADD8?style=for-the-badge&logo=go)](https://golang.org/)
 [![License](https://img.shields.io/badge/License-MIT-FF69B4?style=for-the-badge)](LICENSE)
@@ -22,7 +20,6 @@
 [🚀 Quick Start](#-quick-start) • [📚 Documentation](#-documentation) • [🤝 Contributing](#-contributing) • [📄 License](#-license)
 </div>
 
----
 
 ## ✨ What is EVE?
 

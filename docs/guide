@@ -1,0 +1,89 @@
+# Blueprint
+
+#### Logic Flow
+
+1. Wait for user input.
+2. Send the input to the LLM.
+3. The LLM either responds directly or requests a tool to be used.
+4. The agent executes the requested tool (e.g., reading a file).
+5. The tool's result is sent back to the LLM.
+6. The LLM provides the final response.
+
+This forms the core **feedback loop**.
+
+```mermaid
+graph LR
+    subgraph "Application Progression"
+        A[chat.go<br/>Basic Chat] --> B[read.go<br/>+ File Reading]
+        B --> C[list_files.go<br/>+ Directory Listing]
+        C --> D[bash_tool.go<br/>+ Shell Commands]
+        D --> E[edit_tool.go<br/>+ File Editing]
+        E --> F[code_search_tool.go<br/>+ Code Search]
+    end
+    
+    subgraph "Tool Capabilities"
+        G[No Tools] --> H[read_file]
+        H --> I[read_file<br/>list_files]
+        I --> J[read_file<br/>list_files<br/>bash]
+        J --> K[read_file<br/>list_files<br/>bash<br/>edit_file]
+        K --> L[read_file<br/>list_files<br/>bash<br/>code_search]
+    end
+    
+    A -.-> G
+    B -.-> H
+    C -.-> I
+    D -.-> J
+    E -.-> K
+    F -.-> L
+```
+
+---
+
+#### Agent Architecture
+
+```mermaid
+graph TB
+    subgraph "Agent Architecture"
+        A[Agent] --> B[Anthropic Client]
+        A --> C[Tool Registry]
+        A --> D[getUserMessage Function]
+        A --> E[Verbose Logging]
+    end
+    
+    subgraph "Shared Event Loop"
+        F[Start Chat Session] --> G[Get User Input]
+        G --> H{Empty Input?}
+        H -->|Yes| G
+        H -->|No| I[Add to Conversation]
+        I --> J[runInference]
+        J --> K[Claude Response]
+        K --> L{Tool Use?}
+        L -->|No| M[Display Text]
+        L -->|Yes| N[Execute Tools]
+        N --> O[Collect Results]
+        O --> P[Send Results to Claude]
+        P --> J
+        M --> G
+    end
+    
+    subgraph "Tool Execution Loop"
+        N --> Q[Find Tool by Name]
+        Q --> R[Execute Tool Function]
+        R --> S[Capture Result/Error]
+        S --> T[Add to Tool Results]
+        T --> U{More Tools?}
+        U -->|Yes| Q
+        U -->|No| O
+    end
+```
+
+---
+
+##### To do:
+
+* Custom tools (e.g., API caller, web scraper)
+* Tool chains (run tools in a sequence)
+* Memory features (remember things across sessions)
+* A web UI for your agent
+* Integration with local AI models and frameworks like tf, pytorch, onnx, ollama, openrouter, etc.
+

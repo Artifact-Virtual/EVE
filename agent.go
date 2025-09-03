@@ -4,10 +4,16 @@ package main
 import (
 	"bufio"
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/anthropics/anthropic-sdk-go"
+	"github.com/invopop/jsonschema"
+	"io"
 	"log"
+	"net/http"
 	"os"
+	"strings"
 )
 
 // GenericAgent uses the LLMProvider interface for provider-agnostic operation
@@ -30,6 +36,48 @@ func NewGenericAgent(
 		tools:          tools,
 		verbose:        verbose,
 	}
+}
+
+type APICallInput struct {
+	URL     string            `json:"url" jsonschema_description:"The URL to make the HTTP request to"`
+	Method  string            `json:"method" jsonschema_description:"HTTP method (GET, POST, PUT, DELETE, etc.)"`
+	Headers map[string]string `json:"headers,omitempty" jsonschema_description:"Optional headers as key-value pairs"`
+	Body    string            `json:"body,omitempty" jsonschema_description:"Optional request body"`
+}
+
+var APICallInputSchema = GenerateSchema[APICallInput]()
+
+func APICall(input json.RawMessage) (string, error) {
+	apiInput := APICallInput{}
+	err := json.Unmarshal(input, &apiInput)
+	if err != nil {
+		return "", err
+	}
+	req, err := http.NewRequest(apiInput.Method, apiInput.URL, strings.NewReader(apiInput.Body))
+	if err != nil {
+		return "", err
+	}
+	for k, v := range apiInput.Headers {
+		req.Header.Set(k, v)
+	}
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	return fmt.Sprintf("Status: %s\nBody: %s", resp.Status, string(body)), nil
+}
+
+var APICallDefinition = ToolDefinition{
+	Name:        "api_call",
+	Description: "Make an HTTP request to a given URL. Supports GET, POST, PUT, DELETE, etc.",
+	InputSchema: APICallInputSchema,
+	Function:    APICall,
 }
 
 func (a *GenericAgent) Run(ctx context.Context) error {
@@ -277,6 +325,7 @@ func main() {
 		BashDefinition,
 		EditFileDefinition,
 		CodeSearchDefinition,
+		APICallDefinition,
 	}
 
 	if *verbose {

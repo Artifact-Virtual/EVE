@@ -1,251 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EVE - Your AI Coding Assistant</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EVE — AI Coding Assistant</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lora:wght@500&display=swap" rel="stylesheet">
-<style>
-  .font-inter { font-family: 'Inter', sans-serif; }
-  .font-lora { font-family: 'Lora', serif; }
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <meta name="description" content="EVE — AI coding assistant for smarter, faster development." />
+  <style>
+    :root{
+      --bg-900:#0b0f12; /* very dark */
+      --bg-800:#111827;
+      --accent-pink:#ec4899;
+      --accent-purple:#8b5cf6;
+      --muted:#94a3b8;
+    }
+    html,body{height:100%;}
+    body{
+      background:linear-gradient(180deg,var(--bg-900),var(--bg-800));
+      color:#ffffff;
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+    .glass { background: rgba(17,24,39,0.6); border:1px solid rgba(255,255,255,0.04); backdrop-filter: blur(8px); }
+    .glass-2 { background: rgba(17,24,39,0.75); border:1px solid rgba(255,255,255,0.03); backdrop-filter: blur(12px); }
 
-  .animated-gradient {
-    background-size: 200% 200%;
-    background-image: linear-gradient(45deg, #2c1338, #4a1f5d, #7c3aed, #c026d3);
-    animation: gradient-animation 20s ease infinite;
-  }
-  @keyframes gradient-animation {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
+    /* Hero animations */
+    .hero-orb{ width:260px; height:260px; border-radius:40%; position:relative; overflow:visible; }
+    .orb-layer{ position:absolute; inset:0; border-radius:inherit; filter: blur(28px) saturate(140%); transform-origin:center; }
+    .orb-1{ background: radial-gradient(circle at 30% 20%, rgba(236,72,153,0.18), transparent 20%), radial-gradient(circle at 80% 80%, rgba(139,92,246,0.14), transparent 25%); animation: orbMove 12s ease-in-out infinite; }
+    .orb-2{ background: linear-gradient(135deg, rgba(139,92,246,0.06), rgba(236,72,153,0.04)); transform: scale(1.08); animation: orbScale 10s ease-in-out infinite; }
+    @keyframes orbMove { 0%{transform: translateY(0) rotate(0);} 50%{transform: translateY(-12px) rotate(12deg);} 100%{transform: translateY(0) rotate(0);} }
+    @keyframes orbScale{0%{transform:scale(1.02);}50%{transform:scale(1);}100%{transform:scale(1.02);} }
 
-  .code-lines {
-    animation: code
-    animation: floating 6s ease-in-out infinite;
-  }
-  @keyframes floating {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
-  }
+    /* code lines animation */
+    .code-line{ opacity:0.2; transform:translateX(-8px); animation: codeFade 4s linear infinite; }
+    .code-line:nth-child(2){ animation-delay:0.6s; }
+    .code-line:nth-child(3){ animation-delay:1.2s; }
+    .code-line:nth-child(4){ animation-delay:1.8s; }
+    .code-line:nth-child(5){ animation-delay:2.4s; }
+    @keyframes codeFade{ 0%{opacity:0; transform:translateX(-8px);}10%{opacity:1; transform:translateX(0);}70%{opacity:1;}100%{opacity:0; transform:translateX(8px);} }
 
-  .pulse-ring {
-    animation: pulse-ring 2s ease-out infinite;
-  }
-  @keyframes pulse-ring {
-    0% { transform: scale(0.8); opacity: 1; }
-    100% { transform: scale(2.4); opacity: 0; }
-  }
+    /* subtle focus ring helper */
+    .focus-ring:focus{ outline:2px solid rgba(236,72,153,0.14); outline-offset:3px; }
 
-  .code-lines {
-    animation: code-typing 8s ease-in-out infinite;
-  }
-  @keyframes code-typing {
-    0%, 90%, 100% { opacity: 0; transform: translateX(-10px); }
-    10%, 80% { opacity: 1; transform: translateX(0); }
-  }
-
-  /* Custom Scrollbar */
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-  ::-webkit-scrollbar-track {
-    background: rgba(44, 19, 56, 0.5);
-    border-radius: 10px;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: rgba(168, 85, 247, 0.5);
-    border-radius: 10px;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(192, 132, 252, 0.7);
-  }
-
-  /* Smooth scrolling */
-  html {
-    scroll-behavior: smooth;
-  }
-</style>
+    /* responsive tweaks */
+    @media (max-width:768px){ .hero-orb{ width:200px; height:200px; } }
+  </style>
 </head>
-<body class="bg-gray-900 text-gray-200 antialiased font-inter animated-gradient">
-  <div class="w-full h-full min-h-screen flex flex-col">
-    <!-- Header -->
-    <header class="w-full p-4 md:p-6 bg-black/10 backdrop-blur-md border-b border-white/10 sticky top-0 z-50">
-      <nav class="max-w-7xl mx-auto flex justify-between items-center">
-        <div class="text-2xl font-lora font-bold text-white tracking-wider">
-          <a href="#home" class="flex items-center gap-2">
-            <i class="fas fa-atom text-purple-400"></i>
-            <span>EVE</span>
-          </a>
+<body class="min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="w-full glass py-4">
+    <div class="max-w-6xl mx-auto px-6 flex items-center justify-between">
+      <a href="#home" class="flex items-center gap-3">
+        <div class="w-9 h-9 bg-gradient-to-br from-[var(--accent-pink)] to-[var(--accent-purple)] rounded-md flex items-center justify-center">
+          <i class="fas fa-atom text-white"></i>
         </div>
-        <div class="hidden md:flex items-center gap-6 text-sm">
-          <a href="#features" class="hover:text-purple-300 transition-colors">Features</a>
-          <a href="#pricing" class="hover:text-purple-300 transition-colors">Pricing</a>
-          <a href="#docs" class="hover:text-purple-300 transition-colors">Docs</a>
-          <a href="#contact" class="hover:text-purple-300 transition-colors">Contact</a>
-        </div>
-        <div class="flex items-center gap-4">
-          <a href="#signin" class="text-sm hover:text-purple-300 transition-colors">Sign In</a>
-          <a href="#getstarted" class="text-sm font-semibold bg-pink-500 text-white px-4 py-2 rounded-md hover:bg-pink-600 transition-all duration-300 transform hover:scale-105">
-            Get Started
-          </a>
-        </div>
+        <span class="text-lg font-semibold">EVE</span>
+      </a>
+      <nav class="hidden md:flex items-center gap-8 text-sm text-[var(--muted)]">
+        <a href="#features" class="hover:text-white transition">Features</a>
+        <a href="#pricing" class="hover:text-white transition">Pricing</a>
+        <a href="#docs" class="hover:text-white transition">Docs</a>
+        <a href="#contact" class="hover:text-white transition">Contact</a>
       </nav>
-    </header>
+      <div class="hidden md:flex gap-4">
+        <a href="#signin" class="text-sm text-[var(--muted)] hover:text-white transition">Sign in</a>
+        <a href="#getstarted" class="inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-semibold bg-gradient-to-r from-[var(--accent-pink)] to-[var(--accent-purple)] shadow-lg hover:scale-[1.02] transition-transform">Get started</a>
+      </div>
+      <button id="mobileToggle" class="md:hidden p-2 text-[var(--muted)]"> <i class="fas fa-bars"></i> </button>
+    </div>
+  </header>
 
-    <!-- Hero Section -->
-    <main id="home" class="flex-grow flex items-center justify-center">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 grid md:grid-cols-2 gap-16 items-center">
-        <!-- Left Column: Animated Hero Object -->
-        <div class="flex justify-center items-center relative">
-          <div class="relative w-80 h-80 flex items-center justify-center">
-            <!-- Pulse rings -->
-            <div class="absolute inset-0 rounded-full bg-purple-500/20 pulse-ring"></div>
-            <div class="absolute inset-0 rounded-full bg-pink-500/20 pulse-ring" style="animation-delay: 1s;"></div>
-            
-            <!-- Main container -->
-            <div class="relative floating bg-black/30 backdrop-blur-md rounded-2xl p-8 border border-purple-500/30 shadow-2xl">
-              <!-- Terminal header -->
-              <div class="flex items-center gap-2 mb-4">
-                <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                <span class="text-xs text-purple-300 ml-2">eve-cli</span>
-              </div>
-              
-              <!-- Code simulation -->
-              <div class="space-y-2 text-sm font-mono">
-                <div class="code-lines text-purple-400">$ eve analyze --file app.js</div>
-                <div class="code-lines text-green-400" style="animation-delay: 1s;">✓ Code analyzed successfully</div>
-                <div class="code-lines text-blue-400" style="animation-delay: 2s;">💡 3 optimizations found</div>
-                <div class="code-lines text-pink-400" style="animation-delay: 3s;">🚀 Performance improved by 34%</div>
-              </div>
-              
-              <!-- AI Brain visualization -->
-              <div class="absolute -top-4 -right-4 w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-                <i class="fas fa-brain text-white text-lg"></i>
-              </div>
-            </div>
-          </div>
-        </div>
+  <!-- Hero -->
+  <main id="home" class="flex-1 flex items-center">
+    <div class="max-w-6xl mx-auto px-6 py-20 grid lg:grid-cols-2 gap-12 items-center">
 
-        <!-- Right Column: Text -->
-        <div class="text-center md:text-left">
-          <h1 class="text-5xl md:text-6xl lg:text-7xl font-lora text-white font-medium leading-tight mb-6">
-            Code with <span class="text-pink-400">Clarity</span>.
-            <br>
-            Build with <span class="text-purple-400">Confidence</span>.
-          </h1>
-          <p class="text-lg md:text-xl text-purple-200 max-w-xl mx-auto md:mx-0 mb-8">
-            EVE is your personal AI coding assistant, engineered to understand context, streamline your workflow, and help you write cleaner, more efficient code, faster than ever before.
-          </p>
-          <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
-            <a href="#getstarted" class="inline-block bg-pink-500 text-white font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-pink-600 transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-pink-500">
-              Start Building &rarr;
-            </a>
-            <a href="#docs" class="inline-block bg-gray-700/50 text-purple-200 font-semibold px-8 py-3 rounded-lg shadow-lg hover:bg-gray-700/80 transition-all duration-300">
-              Read the Docs
-            </a>
-          </div>
-          <p class="text-sm text-purple-300/70 mt-6">Available as CLI and Web Interface</p>
+      <!-- Left: text -->
+      <div>
+        <h1 class="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6">
+          Code with <span class="bg-clip-text text-transparent bg-gradient-to-r from-[var(--accent-pink)] to-[var(--accent-purple)]">Clarity</span>.
+        </h1>
+        <p class="text-lg text-[var(--muted)] max-w-xl mb-8">EVE is an AI-first coding assistant that understands context, reduces toil, and helps you ship better code faster — integrated for CLI and web workflows.</p>
+
+        <div class="flex flex-wrap gap-4">
+          <a href="#getstarted" class="inline-flex items-center gap-3 px-5 py-3 bg-gradient-to-r from-[var(--accent-pink)] to-[var(--accent-purple)] rounded-md font-medium shadow">Start building <i class="fas fa-arrow-right"></i></a>
+          <a href="#docs" class="inline-flex items-center gap-3 px-5 py-3 rounded-md bg-transparent border border-gray-700 text-[var(--muted)] hover:text-white hover:border-gray-600">Read docs</a>
         </div>
       </div>
-    </main>
 
-    <!-- Features Section -->
-    <section id="features" class="py-24 bg-black/20 backdrop-blur-sm">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-          <h2 class="text-4xl font-lora font-bold text-white mb-4">Intelligent Code Analysis</h2>
-          <p class="text-xl text-purple-200 max-w-3xl mx-auto">Experience the power of AI-driven development with features designed to enhance your coding workflow.</p>
-        </div>
-        
-        <div class="grid md:grid-cols-3 gap-8">
-          <div class="bg-black/30 backdrop-blur-md border border-purple-500/30 rounded-xl p-8 hover:border-purple-400/50 transition-all duration-300">
-            <div class="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mb-6">
-              <i class="fas fa-search-plus text-white text-xl"></i>
-            </div>
-            <h3 class="text-xl font-semibold text-white mb-4">Smart Code Analysis</h3>
-            <p class="text-purple-200">Deep contextual understanding of your codebase with intelligent suggestions for optimization and bug detection.</p>
+      <!-- Right: animated demo orb + code lines -->
+      <div class="flex items-center justify-center lg:justify-end">
+        <div class="relative">
+          <div class="hero-orb">
+            <div class="orb-layer orb-1"></div>
+            <div class="orb-layer orb-2"></div>
           </div>
-          
-          <div class="bg-black/30 backdrop-blur-md border border-purple-500/30 rounded-xl p-8 hover:border-purple-400/50 transition-all duration-300">
-            <div class="w-12 h-12 bg-pink-500 rounded-lg flex items-center justify-center mb-6">
-              <i class="fas fa-bolt text-white text-xl"></i>
+
+          <div class="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div class="glass-2 rounded-2xl p-6 w-[360px] max-w-full">
+              <div class="flex items-center gap-3 mb-4">
+                <div class="w-3 h-3 bg-red-500 rounded-full"></div>
+                <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
+                <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                <div class="ml-auto text-xs text-[var(--muted)] font-mono">eve-cli</div>
+              </div>
+
+              <div class="font-mono text-sm space-y-2 text-[var(--muted)]">
+                <div class="code-line text-[rgba(236,72,153,0.95)]">$ eve analyze --file app.js</div>
+                <div class="code-line text-green-400">✓ Analyzing files...</div>
+                <div class="code-line text-sky-400">💡 4 suggestions found</div>
+                <div class="code-line text-purple-300">⚡  Performance +38%</div>
+                <div class="code-line text-pink-300">✨ Quality: A+</div>
+              </div>
             </div>
-            <h3 class="text-xl font-semibold text-white mb-4">Lightning Fast</h3>
-            <p class="text-purple-200">Optimized for performance with instant feedback and real-time code analysis that doesn't slow you down.</p>
-          </div>
-          
-          <div class="bg-black/30 backdrop-blur-md border border-purple-500/30 rounded-xl p-8 hover:border-purple-400/50 transition-all duration-300">
-            <div class="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-6">
-              <i class="fas fa-shield-alt text-white text-xl"></i>
-            </div>
-            <h3 class="text-xl font-semibold text-white mb-4">Secure & Private</h3>
-            <p class="text-purple-200">Your code stays private with end-to-end encryption and optional local processing capabilities.</p>
           </div>
         </div>
       </div>
-    </section>
 
-    <!-- Pricing Section -->
-    <section id="pricing" class="py-24">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="text-center mb-16">
-          <h2 class="text-4xl font-lora font-bold text-white mb-4">Simple, Transparent Pricing</h2>
-          <p class="text-xl text-purple-200">Choose the plan that fits your development needs.</p>
-        </div>
-        
-        <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-          <div class="bg-black/30 backdrop-blur-md border border-purple-500/30 rounded-xl p-8 text-center">
-            <h3 class="text-2xl font-semibold text-white mb-4">Starter</h3>
-            <div class="text-4xl font-bold text-purple-400 mb-2">Free</div>
-            <p class="text-purple-200 mb-6">Perfect for learning and small projects</p>
-            <ul class="text-left space-y-3 mb-8">
-              <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>Basic code analysis</li>
-              <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>CLI access</li>
-              <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>Community support</li>
-            </ul>
-            <a href="#signup" class="block bg-gray-700 text-white py-3 px-6 rounded-lg hover:bg-gray-600 transition-colors">Get Started</a>
-          </div>
-          
-          <div class="bg-black/30 backdrop-blur-md border-2 border-pink-500 rounded-xl p-8 text-center relative transform scale-105">
-            <div class="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-pink-500 text-white px-4 py-1 rounded-full text-sm font-semibold">Popular</div>
-            <h3 class="text-2xl font-semibold text-white mb-4">Pro</h3>
-            <div class="text-4xl font-bold text-pink-400 mb-2">$19<span class="text-lg text-purple-300">/month</span></div>
-            <p class="text-purple-200 mb-6">For professional developers</p>
-            <ul class="text-left space-y-3 mb-8">
-              <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>Advanced AI analysis</li>
-              <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>Web interface access</li>
-              <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>Priority support</li>
-              <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>Custom integrations</li>
-            </ul>
-            <a href="#signup" class="block bg-pink-500 text-white py-3 px-6 rounded-lg hover:bg-pink-600 transition-colors">Start Pro Trial</a>
-          </div>
-          
-          <div class="bg-black/30 backdrop-blur-md border border-purple-500/30 rounded-xl p-8 text-center">
-            <h3 class="text-2xl font-semibold text-white mb-4">Enterprise</h3>
-            <div class="text-4xl font-bold text-purple-400 mb-2">Custom</div>
-            <p class="text-purple-200 mb-6">For teams and organizations</p>
-            <ul class="text-left space-y-3 mb-8">
-              <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>Everything in Pro</li>
-              <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>Team management</li>
-              <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>On-premise deployment</li>
-              <li class="flex items-center"><i class="fas fa-check text-green-400 mr-3"></i>24/7 dedicated support</li>
-            </ul>
-            <a href="#contact" class="block bg-purple-500 text-white py-3 px-6 rounded-lg hover:bg-purple-600 transition-colors">Contact Sales</a>
-          </div>
+    </div>
+  </main>
+
+  <!-- Minimal features and footer -->
+  <section id="features" class="py-16">
+    <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-6">
+      <div class="glass p-6 rounded-lg">
+        <h3 class="font-semibold mb-2">Smart Analysis</h3>
+        <p class="text-[var(--muted)] text-sm">Context aware suggestions, refactor hints, and security checks.</p>
+      </div>
+      <div class="glass p-6 rounded-lg">
+        <h3 class="font-semibold mb-2">Fast Feedback</h3>
+        <p class="text-[var(--muted)] text-sm">Millisecond-grade responses for interactive workflows.</p>
+      </div>
+      <div class="glass p-6 rounded-lg">
+        <h3 class="font-semibold mb-2">Private by default</h3>
+        <p class="text-[var(--muted)] text-sm">Local-first options, encryption, and controls for teams.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer class="py-10 border-t border-gray-800">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 bg-gradient-to-br from-[var(--accent-pink)] to-[var(--accent-purple)] rounded-md flex items-center justify-center"><i class="fas fa-atom"></i></div>
+        <div>
+          <div class="font-semibold">EVE</div>
+          <div class="text-xs text-[var(--muted)]">© 2025 EVE Project Contributors</div>
         </div>
       </div>
-    </section>
 
-    <!-- Footer -->
-    <footer class="bg-black/40 backdrop-blur-md border-t border-white/10 py-16">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid md:grid-cols-4 gap-8">
-          <div>
-            <div class="text-2xl font-lora font-bold text 
+      <div class="text-sm text-[var(--muted)]">Built for developers • CLI + Web • Privacy-first</div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile toggle (minimal)
+    document.getElementById('mobileToggle')?.addEventListener('click', ()=>{ alert('Open mobile nav'); });
+  </script>
+
+</body>
+</html>

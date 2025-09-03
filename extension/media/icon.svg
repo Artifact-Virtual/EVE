@@ -1,0 +1,13 @@
+<svg width="128" height="128" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<linearGradient id="logoGradient" x1="0" y1="0" x2="250" y2="250" gradientUnits="userSpaceOnUse">
+<stop stop-color="#EC4899" />
+<stop offset="1" stop-color="#8B5CF6" />
+</linearGradient>
+</defs>
+<g class="logo-group">
+<path class="path1" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="url(#logoGradient)"/>
+<path class="path2" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="none" stroke="url(#logoGradient)" stroke-width="4"/>
+<path class="path3" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="none" stroke="white" stroke-width="2" opacity="0.3"/>
+</g>
+</svg>

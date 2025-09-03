@@ -5,7 +5,7 @@
 
 <div align="center">
 <div style="background: linear-gradient(135deg, #D291BC 0%, #B38CB4 50%, #A3A1FF 100%); padding: 20px; text-align: center; margin-bottom: 20px; border-radius: 10px;">
-  <h1 style="color: white; margin: 0; font-size: 3em; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">🌸 EVE 🌸</h1>
+  <h1 style="color: white; margin: 0; font-size: 3em; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);"> E🌷E </h1>
   <p style="color: white; margin: 10px 0 0 0; font-size: 1.2em; opacity: 0.9;">Multi-Provider AI Coding Assistant with Advanced Tool Integration</p>
 </div>
 
@@ -21,9 +21,11 @@
 
 [🚀 Quick Start](#-quick-start) • [📚 Documentation](#-documentation) • [🤝 Contributing](#-contributing) • [📄 License](#-license)
 
-</div>## ✨ What is EVE?
+</div>
 
-🌷 **EVE** is a sophisticated, AI-powered coding assistant that seamlessly integrates with multiple AI providers (Anthropic Claude, Google Gemini, OpenAI) to help you:
+## ✨ What is EVE?
+
+🌺 **EVE** is a sophisticated, AI-powered coding assistant that seamlessly integrates with multiple AI providers (Anthropic Claude, Google Gemini, OpenAI) to help you:
 
 - **🔍 Read & Analyze** code files and project structures
 - **✏️ Edit & Modify** code with precision and safety

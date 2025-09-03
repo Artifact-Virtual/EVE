@@ -91,8 +91,8 @@
 
 <!-- Header -->
 <header id="main-header" class="w-full py-6 fixed top-0 left-0 z-50 transition-all duration-300 ease-in-out">
-    <div class="max-w-7xl mx-auto px-6 flex items-center justify-start">
-    <a href="/" class="flex items-center" aria-label="EVE Home" title="EVE Home">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        <a href="/" class="flex items-center" aria-label="EVE Home" title="EVE Home">
             <div class="w-12 h-12 flex items-center justify-center">
                 <svg width="36" height="36" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <defs>
@@ -108,6 +108,9 @@
                 </svg>
             </div>
         </a>
+        <button id="mobileToggle" class="md:hidden text-[var(--muted)] hover:text-white" aria-label="Open menu">
+            <i class="fas fa-bars text-2xl"></i>
+        </button>
     </div>
 </header>
 
@@ -171,28 +174,37 @@
                         <p class="text-xl text-[var(--muted)] max-w-3xl mx-auto">
                             Welcome to <strong>EVE</strong> - your AI-powered coding assistant! This handbook will guide you through setting up and running EVE on your system.
                         </p>
-                        <div class="mt-4">
+                        <div class="mt-4 flex items-center gap-6 justify-center">
                             <a href="https://github.com/Artifact-Virtual/EVE" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-[var(--accent-pink)] hover:underline text-lg font-semibold">
                                 <i class="fab fa-github"></i> View on GitHub
+                            </a>
+                            <a href="docs.html" class="inline-flex items-center gap-2 text-[var(--accent-purple)] hover:underline text-lg font-semibold">
+                                <i class="fas fa-book"></i> Read the Docs
                             </a>
                         </div>
                     </div>
 
-                    <div class="grid md:grid-cols-3 gap-6 mb-8">
-                        <div class="glass-card p-6 text-center">
-                            <div class="text-3xl mb-3">🛰️</div>
-                            <h3 class="text-lg font-semibold mb-2">Multi-Provider AI</h3>
-                            <p class="text-sm text-[var(--muted)]">Integrates with Anthropic Claude, Google Gemini, and OpenAI GPT</p>
+                    <!-- Feature Highlights (concise, professional) -->
+                    <div class="grid md:grid-cols-4 gap-4 mb-10">
+                        <div class="glass-card p-5">
+                            <div class="text-xl mb-2">🛰️</div>
+                            <div class="font-semibold">Multi-Provider</div>
+                            <div class="text-sm text-[var(--muted)]">Anthropic, Gemini, OpenAI via a single interface</div>
                         </div>
-                        <div class="glass-card p-6 text-center">
-                            <div class="text-3xl mb-3">🧰</div>
-                            <h3 class="text-lg font-semibold mb-2">Powerful Tools</h3>
-                            <p class="text-sm text-[var(--muted)]">Code analysis, editing, terminal commands, and API integration</p>
+                        <div class="glass-card p-5">
+                            <div class="text-xl mb-2">🧰</div>
+                            <div class="font-semibold">Rich Tools</div>
+                            <div class="text-sm text-[var(--muted)]">Read, edit, search, run, and integrate</div>
                         </div>
-                        <div class="glass-card p-6 text-center">
-                            <div class="text-3xl mb-3">🧭</div>
-                            <h3 class="text-lg font-semibold mb-2">Easy Setup</h3>
-                            <p class="text-sm text-[var(--muted)]">Get started quickly with devenv or manual installation</p>
+                        <div class="glass-card p-5">
+                            <div class="text-xl mb-2">🤝</div>
+                            <div class="font-semibold">Multiplayer</div>
+                            <div class="text-sm text-[var(--muted)]">Team sessions with full action history</div>
+                        </div>
+                        <div class="glass-card p-5">
+                            <div class="text-xl mb-2">🛡️</div>
+                            <div class="font-semibold">Resilient</div>
+                            <div class="text-sm text-[var(--muted)]">Errors handled gracefully; audit-friendly</div>
                         </div>
                     </div>
                 </section>
@@ -204,17 +216,17 @@
                         <p class="mb-6">EVE is a multi-provider AI coding assistant that integrates with:</p>
 
                         <div class="grid md:grid-cols-3 gap-4 mb-6">
-                            <div class="text-center p-4 bg-[rgba(236,72,153,0.1)] rounded-lg">
+                            <div class="text-center p-4 bg-[rgba(236,72,153,0.1)]">
                                 <div class="text-2xl mb-2">🧩</div>
                                 <h4 class="font-semibold">Anthropic Claude</h4>
                                 <p class="text-sm text-[var(--muted)]">Excellent for complex reasoning and code analysis</p>
                             </div>
-                            <div class="text-center p-4 bg-[rgba(139,92,246,0.1)] rounded-lg">
+                            <div class="text-center p-4 bg-[rgba(139,92,246,0.1)]">
                                 <div class="text-2xl mb-2">💡</div>
                                 <h4 class="font-semibold">Google Gemini</h4>
                                 <p class="text-sm text-[var(--muted)]">Fast and efficient for quick tasks</p>
                             </div>
-                            <div class="text-center p-4 bg-[rgba(59,130,246,0.1)] rounded-lg">
+                            <div class="text-center p-4 bg-[rgba(59,130,246,0.1)]">
                                 <div class="text-2xl mb-2">🖌️</div>
                                 <h4 class="font-semibold">OpenAI GPT</h4>
                                 <p class="text-sm text-[var(--muted)]">Versatile for creative coding solutions</p>

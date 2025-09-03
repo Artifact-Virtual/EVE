@@ -87,8 +87,8 @@
 <header id="main-header" class="w-full py-10 fixed top-0 left-0 z-50 transition-all duration-300 ease-in-out">
     <div class="max-w-6xl mx-auto px-6 flex items-start justify-between">
         <a href="#home" class="flex items-start gap-3">
-            <div class="w-64 h-64 flex items-center justify-center">
-                <svg width="250" height="250" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <div class="w-12 h-12 flex items-center justify-center"> <!-- shrink logo to avoid overlaying content -->
+                <svg width="36" height="36" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <linearGradient id="logoGradient" x1="0" y1="0" x2="250" y2="250" gradientUnits="userSpaceOnUse">
                             <stop stop-color="#EC4899" />
@@ -104,17 +104,9 @@
             </div>
         </a>
         <div class="hidden md:flex flex-col items-end gap-4">
-            <div class="flex gap-4 items-center">
-                <a href="#signin" class="text-sm text-[var(--muted)] hover:text-white transition">Sign in</a>
-                <a href="docs/getting_started.html" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold bg-gradient-to-r from-[var(--accent-pink)] to-[var(--accent-purple)] shadow-lg hover:scale-[1.02] transition-transform">Get started</a>
-            </div>
-            <nav class="flex flex-col items-end gap-2 text-sm text-[var(--muted)]">
-                <a href="docs/BUILD_GUIDE.md" class="hover:text-white transition">Build Your Own</a>
-                <a href="#pricing" class="hover:text-white transition">Pricing</a>
-                <a href="docs/docs.html" class="hover:text-white transition">Docs</a>
-            </nav>
+            <!-- Removed header buttons/links per request -->
         </div>
-        <button id="mobileToggle" class="md:hidden p-2 text-[var(--muted)]"> <i class="fas fa-bars text-xl"></i> </button>
+        <button id="mobileToggle" class="md:hidden p-2 text-[var(--muted)]" aria-label="Open menu"> <i class="fas fa-bars text-xl"></i> </button>
     </div>
 </header>
 
@@ -176,34 +168,6 @@
     </div>
 
 </main>
-
-<footer class="footer py-12">
-    <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-sm">
-        <div class="flex items-center space-x-4 mb-6 md:mb-0">
-            <a href="#home" class="flex items-center gap-3">
-                <svg class="footer-logo" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <defs>
-                        <linearGradient id="logoGradient" x1="0" y1="0" x2="250" y2="250" gradientUnits="userSpaceOnUse">
-                            <stop stop-color="#EC4899" />
-                            <stop offset="1" stop-color="#8B5CF6" />
-                        </linearGradient>
-                    </defs>
-                    <g class="logo-group">
-                        <path class="path1" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="url(#logoGradient)"/>
-                        <path class="path2" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="none" stroke="url(#logoGradient)" stroke-width="4"/>
-                        <path class="path3" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="none" stroke="white" stroke-width="2" opacity="0.3"/>
-                    </g>
-                </svg>
-            </a>
-            <span>&copy; 2024 EVE AI. All rights reserved.</span>
-        </div>
-        <nav class="flex space-x-6">
-            <a href="docs/docs.html" class="hover:text-white transition">Docs</a>
-            <a href="#pricing" class="hover:text-white transition">Pricing</a>
-            <a href="#contact" class="hover:text-white transition">Contact</a>
-        </nav>
-    </div>
-</footer>
 
 <script>
     const mobileToggle = document.getElementById('mobileToggle');

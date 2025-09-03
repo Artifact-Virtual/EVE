@@ -21,7 +21,7 @@ By the end of this workshop, you’ll understand how to:
 
 ## 🛠️ What We're Building
 
-You’ll build 6 versions of a coding assistant. 
+You’ll build 7 versions of a coding assistant. 
 
 Each version adds more features:
 
@@ -31,6 +31,7 @@ Each version adds more features:
 4. **Command Runner** — run shell commands
 5. **File Editor** — modify files
 6. **Code Search** — search your codebase with patterns
+7. **Full Agent** — complete assistant with database, MCP integrations, and multiplayer support
 
 ```mermaid
 graph LR
@@ -40,22 +41,25 @@ graph LR
         C --> D[bash_tool.go<br/>+ Shell Commands]
         D --> E[edit_tool.go<br/>+ File Editing]
         E --> F[code_search_tool.go<br/>+ Code Search]
+        F --> G[agent.go<br/>+ Database & Advanced Features]
     end
     
     subgraph "Tool Capabilities"
-        G[No Tools] --> H[read_file]
-        H --> I[read_file<br/>list_files]
-        I --> J[read_file<br/>list_files<br/>bash]
-        J --> K[read_file<br/>list_files<br/>bash<br/>edit_file]
-        K --> L[read_file<br/>list_files<br/>bash<br/>code_search]
+        H[No Tools] --> I[read_file]
+        I --> J[read_file<br/>list_files]
+        J --> K[read_file<br/>list_files<br/>bash]
+        K --> L[read_file<br/>list_files<br/>bash<br/>edit_file]
+        L --> M[read_file<br/>list_files<br/>bash<br/>code_search]
+        M --> N[read_file<br/>list_files<br/>bash<br/>code_search<br/>database<br/>mcp<br/>multiplayer]
     end
     
-    A -.-> G
-    B -.-> H
-    C -.-> I
-    D -.-> J
-    E -.-> K
-    F -.-> L
+    A -.-> H
+    B -.-> I
+    C -.-> J
+    D -.-> K
+    E -.-> L
+    F -.-> M
+    G -.-> N
 ```
 
 At the end, you’ll end up with a powerful local developer assistant!
@@ -310,11 +314,62 @@ hello          # Greeting script
 
 Once you complete the workshop, try building:
 
+* **Database Integration** — File-based project management with version control
+* **MCP Server Support** — Connect to Model Context Protocol servers
+* **Multiplayer Sessions** — Collaborative coding with action tracking
+* **Checkpoint System** — Save and restore project states
 * Custom tools (e.g., API caller, web scraper)
 * Tool chains (run tools in a sequence)
 * Memory features (remember things across sessions)
 * A web UI for your agent
 * Integration with other AI models
+
+---
+
+## 💾 Database & Advanced Features
+
+### 7. `agent.go` — Full-Featured Agent
+
+The complete EVE agent with database integration, MCP support, and advanced collaboration features.
+
+**New Capabilities:**
+- **Project Database**: File-based storage for project management
+- **Version Control**: Track file changes and versions
+- **Checkpoints**: Save project snapshots for backup/restore
+- **MCP Integration**: Connect to external Model Context Protocol servers
+- **Multiplayer Support**: Track collaborative actions and sessions
+
+**Database Features:**
+- Save files with automatic versioning
+- Create project checkpoints
+- Track multiplayer actions
+- Manage MCP server integrations
+- File-based storage (no external dependencies)
+
+**Example Usage:**
+```bash
+# Save a file to the database
+"Save this code to database: print('Hello World') as hello.py"
+
+# Create a checkpoint
+"Create a checkpoint called 'before-refactor'"
+
+# Add an MCP integration
+"Add MCP server at http://localhost:3000 with auth token abc123"
+
+# View multiplayer history
+"Show recent multiplayer actions"
+```
+
+**Database Architecture:**
+```
+eve_project_data/
+├── files/           # Saved project files
+├── checkpoints/     # Project snapshots
+├── mcp/            # MCP server configurations
+├── multiplayer/    # Action history
+└── next_ids.json   # ID counters
+```
 
 ---
 

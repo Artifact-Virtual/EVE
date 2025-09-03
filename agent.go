@@ -135,12 +135,9 @@ func SaveToDatabase(input json.RawMessage) (string, error) {
 		return "", fmt.Errorf("failed to parse input: %w", err)
 	}
 
-	// Calculate simple hash for content
-	hash := fmt.Sprintf("%x", len(dbInput.Content))
-
 	// Save to database
 	if globalDB != nil {
-		if err := globalDB.SaveFile(dbInput.Path, dbInput.Content, hash); err != nil {
+		if err := globalDB.SaveFile(dbInput.Path, dbInput.Content); err != nil {
 			return "", fmt.Errorf("failed to save to database: %w", err)
 		}
 		return fmt.Sprintf("Successfully saved file '%s' to database", dbInput.Path), nil
@@ -170,10 +167,11 @@ func CreateCheckpoint(input json.RawMessage) (string, error) {
 	}
 
 	if globalDB != nil {
-		if err := globalDB.CreateCheckpoint(cpInput.Name, cpInput.Description); err != nil {
+		checkpoint, err := globalDB.CreateCheckpoint(cpInput.Name, cpInput.Description)
+		if err != nil {
 			return "", fmt.Errorf("failed to create checkpoint: %w", err)
 		}
-		return fmt.Sprintf("Successfully created checkpoint '%s'", cpInput.Name), nil
+		return fmt.Sprintf("Successfully created checkpoint '%s' with ID %d", checkpoint.Name, checkpoint.ID), nil
 	}
 
 	return "", fmt.Errorf("database not initialized")
@@ -198,14 +196,8 @@ func RestoreCheckpoint(input json.RawMessage) (string, error) {
 		return "", fmt.Errorf("failed to parse input: %w", err)
 	}
 
-	if globalDB != nil {
-		if err := globalDB.RestoreCheckpoint(cpInput.CheckpointID); err != nil {
-			return "", fmt.Errorf("failed to restore checkpoint: %w", err)
-		}
-		return fmt.Sprintf("Successfully restored checkpoint %d", cpInput.CheckpointID), nil
-	}
-
-	return "", fmt.Errorf("database not initialized")
+	// Checkpoint restoration not implemented for file-based storage
+	return "", fmt.Errorf("checkpoint restoration is not implemented for file-based storage")
 }
 
 var RestoreCheckpointDefinition = ToolDefinition{
@@ -259,8 +251,24 @@ func AddMCPIntegration(input json.RawMessage) (string, error) {
 		return "", fmt.Errorf("failed to parse input: %w", err)
 	}
 
+	// Parse config JSON
+	var config map[string]interface{}
+	if mcpInput.Config != "" {
+		if err := json.Unmarshal([]byte(mcpInput.Config), &config); err != nil {
+			return "", fmt.Errorf("failed to parse config JSON: %w", err)
+		}
+	} else {
+		config = make(map[string]interface{})
+	}
+
+	// Add auth token to config if provided
+	if mcpInput.AuthToken != "" {
+		config["auth_token"] = mcpInput.AuthToken
+	}
+	config["endpoint"] = mcpInput.Endpoint
+
 	if globalDB != nil {
-		if err := globalDB.AddMCPIntegration(mcpInput.Name, mcpInput.Endpoint, mcpInput.AuthToken, mcpInput.Config); err != nil {
+		if err := globalDB.AddMCPIntegration(mcpInput.Name, "generic", config); err != nil {
 			return "", fmt.Errorf("failed to add MCP integration: %w", err)
 		}
 		return fmt.Sprintf("Successfully added MCP integration '%s'", mcpInput.Name), nil
@@ -292,7 +300,8 @@ func RecordMultiplayerAction(input json.RawMessage) (string, error) {
 	}
 
 	if globalDB != nil {
-		if err := globalDB.RecordMultiplayerAction(mpInput.SessionID, mpInput.UserID, mpInput.Action, mpInput.Data); err != nil {
+		user := fmt.Sprintf("%s:%s", mpInput.SessionID, mpInput.UserID)
+		if err := globalDB.RecordMultiplayerAction(user, mpInput.Action, mpInput.Data); err != nil {
 			return "", fmt.Errorf("failed to record multiplayer action: %w", err)
 		}
 		return fmt.Sprintf("Recorded multiplayer action: %s by %s", mpInput.Action, mpInput.UserID), nil

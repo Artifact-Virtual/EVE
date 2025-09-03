@@ -1,14 +1,164 @@
+# EVE Project .gitignore
+# Comprehensive .gitignore for Go AI assistant project
+
+# === Build Artifacts ===
+# Go binaries and executables
+eve
+eve.exe
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Go build cache
+.cache/
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool
+*.out
+*.prof
+
+# Go workspace file
+go.work
+go.work.sum
+
+# === Database and Data Files ===
+# EVE project database
+eve_project_data/
+*.db
+*.sqlite
+*.sqlite3
+
+# === API Keys and Secrets ===
+# Environment files
+.env
+.env.local
+.env.production
+.env.staging
+.env.development
+
+# API key files
+api_keys.json
+secrets.json
+credentials.json
+
+# === Development Environment ===
 # Devenv
 .devenv*
 devenv.local.nix
 
-# direnv
-.direnv
+# Direnv
+.direnv/
 
-# pre-commit
+# Pre-commit
 .pre-commit-config.yaml
 
-# Go binaries
+# === IDE and Editor Files ===
+# VS Code
+.vscode/
+*.code-workspace
+
+# GoLand / IntelliJ
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Sublime Text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+*.sublime-workspace
+*.sublime-project
+
+# === OS Generated Files ===
+# macOS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# === Logs and Temporary Files ===
+# Log files
+*.log
+logs/
+log/
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
+
+# === Package and Dependency Files ===
+# Go modules (usually committed, but ignore local overrides)
+go.sum.backup
+vendor/
+
+# Node.js (if any web components)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# === Testing and Coverage ===
+# Test coverage files
+coverage.html
+coverage.xml
+c.out
+
+# Benchmark results
+bench.out
+
+# === CI/CD ===
+# GitHub Actions
+.github/workflows/*.log
+
+# Build artifacts
+dist/
+build/
+
+# === Backup Files ===
+*.bak
+*.backup
+*.orig
+*.rej
+
+# === Specific EVE Tool Binaries ===
 bash_tool
 chat
 chat_verbose
@@ -16,6 +166,31 @@ edit_tool
 list_files
 read
 read_verbose
+code_search_tool
+test_api
+simple
+simple_test
+generic_agent.exe
 
-# demo files
+# === Demo and Example Files ===
 fizzbuzz.js
+demo/
+examples/
+
+# === Documentation Build ===
+# Sphinx documentation
+docs/_build/
+
+# === Miscellaneous ===
+# Local configuration
+config.local.json
+settings.local.json
+
+# Runtime data
+*.pid
+*.seed
+*.pid.lock
+
+# Crash dumps
+*.core
+core

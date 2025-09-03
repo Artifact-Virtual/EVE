@@ -21,6 +21,8 @@
 </div>
 
 
+<div align="left">
+
 ## ✨ What is EVE?
 
 🌺 **EVE** is a sophisticated, AI-powered coding assistant that seamlessly integrates with multiple AI providers (Anthropic Claude, Google Gemini, OpenAI) to help you:

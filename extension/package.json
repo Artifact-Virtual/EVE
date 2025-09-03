@@ -1,0 +1,58 @@
+{
+  "name": "eve-vscode",
+  "displayName": "EVE",
+  "description": "EVE Go CLI integration (chat/plan/apply) + Webview.",
+  "version": "0.0.1",
+  "publisher": "artifact-virtual",
+  "repository": "https://github.com/Artifact-Virtual/EVE",
+  "homepage": "https://github.com/Artifact-Virtual/EVE",
+  "icon": "media/icon.png",
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["Other"],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:eve.chat",
+    "onCommand:eve.plan",
+    "onCommand:eve.apply",
+    "onCommand:eve.openWeb",
+    "onCommand:eve.startDaemon",
+    "onCommand:eve.stopDaemon"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "eve.chat", "title": "EVE: Chat" },
+      { "command": "eve.plan", "title": "EVE: Plan Edits" },
+      { "command": "eve.apply", "title": "EVE: Apply Edits" },
+      { "command": "eve.openWeb", "title": "EVE: Open WebUI" },
+      { "command": "eve.startDaemon", "title": "EVE: Start CLI Daemon" },
+      { "command": "eve.stopDaemon", "title": "EVE: Stop CLI Daemon" }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "EVE",
+      "properties": {
+        "eve.cliPath": { "type": "string", "default": "eve", "description": "Path to EVE CLI binary" },
+        "eve.args": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "eve.logLevel": { "type": "string", "enum": ["error","warn","info","debug","trace"], "default": "info" },
+        "eve.serverMode": { "type": "string", "enum": ["stdio","http"], "default": "stdio" },
+        "eve.httpPort": { "type": "number", "default": 0 }
+      }
+    },
+    "keybindings": [
+      { "command": "eve.chat", "key": "ctrl+alt+e", "mac": "cmd+alt+e", "when": "editorTextFocus" }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "tsc -p ./",
+    "compile": "tsc -p ./",
+    "watch": "tsc -w -p ./",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.0",
+    "typescript": "^5.4.5",
+    "vsce": "^2.15.0",
+    "vscode": "^1.1.37"
+  }
+}

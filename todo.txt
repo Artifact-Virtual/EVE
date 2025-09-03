@@ -5,3 +5,670 @@
 * Memory features (remember things across sessions)
 * A web UI for your agent
 * Integration with local AI models and frameworks like tf, pytorch, onnx, ollama, openrouter, etc.
+
+
+
+# Updates and Upgrades
+## Packaging and Shipping
+
+TodoWrite: [create VSCode ext scaffold (in_progress); bind CLI via commands/output-channel (todo); add .vscode tasks/launch & settings (todo); wire WebUI via webview/proxy (todo); test on Win/Linux (todo); ship VSIX (todo)]
+
+VS Code integration: yo code (TypeScript); in package.json add contributes.commands + activationEvents; in src/extension.ts spawn your CLI (child_process.spawn), stream to window.createOutputChannel('EVE'), register commands, quick-pick, status-bar; add .vscode/tasks.json to run daemon, .vscode/settings.json for eve.cliPath, keybindings.
+
+WebUI: use a Webview panel (vscode.window.createWebviewPanel), load your built /dist/index.html with webview.asWebviewUri, set CSP, use webview.postMessage/onDidReceiveMessage to call the CLI; or proxy to a local eve serve on a random port and embed via webview with iframe.
+
+Quick-start file refs: .vscode/tasks.json; .vscode/launch.json; package.json (commands); src/extension.ts (spawn + webview); media/ (WebUI assets).
+
+
+TodoWrite: [create VSCode ext scaffold (in_progress); bind CLI via commands/output-channel (todo); add .vscode tasks/launch & settings (todo); wire WebUI via webview/proxy (todo); test on Win/Linux (todo); ship VSIX (todo)]
+
+VS Code integration: yo code (TypeScript); in package.json add contributes.commands + activationEvents; in src/extension.ts spawn your CLI (child_process.spawn), stream to window.createOutputChannel('EVE'), register commands, quick-pick, status-bar; add .vscode/tasks.json to run daemon, .vscode/settings.json for eve.cliPath, keybindings.
+
+WebUI: use a Webview panel (vscode.window.createWebviewPanel), load your built /dist/index.html with webview.asWebviewUri, set CSP, use webview.postMessage/onDidReceiveMessage to call the CLI; or proxy to a local eve serve on a random port and embed via webview with iframe.
+
+Quick-start file refs: .vscode/tasks.json; .vscode/launch.json; package.json (commands); src/extension.ts (spawn + webview); media/ (WebUI assets).
+
+
+
+1. Extension Scaffold
+npm install -g yo generator-code
+yo code
+# Pick "TypeScript" extension
+
+2. package.json
+"activationEvents": ["onCommand:eve.run"],
+"contributes": {
+  "commands": [
+    {
+      "command": "eve.run",
+      "title": "Run EVE CLI"
+    }
+  ],
+  "configuration": {
+    "type": "object",
+    "title": "EVE",
+    "properties": {
+      "eve.cliPath": {
+        "type": "string",
+        "default": "eve",
+        "description": "Path to EVE CLI binary"
+      }
+    }
+  }
+}
+
+3. src/extension.ts
+import * as vscode from 'vscode';
+import { spawn } from 'child_process';
+
+export function activate(context: vscode.ExtensionContext) {
+  const eveOut = vscode.window.createOutputChannel('EVE');
+
+  let disposable = vscode.commands.registerCommand('eve.run', () => {
+    const cfg = vscode.workspace.getConfiguration('eve');
+    const cliPath = cfg.get<string>('cliPath') || 'eve';
+
+    const proc = spawn(cliPath, ['--serve']);
+    proc.stdout.on('data', d => eveOut.append(d.toString()));
+    proc.stderr.on('data', d => eveOut.append(d.toString()));
+    proc.on('close', c => eveOut.appendLine(`EVE exited: ${c}`));
+
+    eveOut.show();
+  });
+
+  context.subscriptions.push(disposable);
+}
+
+4. WebUI (two options)
+
+Direct Webview:
+
+const panel = vscode.window.createWebviewPanel(
+  'eveWeb',
+  'EVE WebUI',
+  vscode.ViewColumn.One,
+  { enableScripts: true }
+);
+
+panel.webview.html = fs.readFileSync(
+  path.join(context.extensionPath, 'media', 'index.html'),
+  'utf8'
+);
+
+
+– Use webview.asWebviewUri for local assets.
+– Exchange messages: panel.webview.postMessage(), onDidReceiveMessage.
+
+Proxy to local server: run eve serve --port=XXXX in CLI, then iframe inside Webview.
+
+5. .vscode configs
+
+tasks.json
+
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Run EVE",
+      "type": "shell",
+      "command": "eve",
+      "args": ["--serve"],
+      "problemMatcher": []
+    }
+  ]
+}
+
+
+settings.json
+
+{
+  "eve.cliPath": "/usr/local/bin/eve"
+}
+
+6. Build & Ship
+npm run compile
+vsce package   # creates .vsix
+code --install-extension eve-x.x.x.vsix
+
+
+TodoWrite status:
+
+ create scaffold
+
+ bind CLI/output-channel
+
+ add tasks/launch/settings
+
+ wire WebUI (webview/proxy)
+
+ test Win/Linux
+
+ ship VSIX
+
+
+
+TodoWrite: [create VSCode ext scaffold (completed); bind CLI via commands/output-channel (in_progress); add .vscode tasks/launch & settings (todo); wire WebUI via webview/proxy (todo); test on Win/Linux (todo); ship VSIX (todo)]
+
+VSIX (VS Code, Cursor, Windsurf): TypeScript ext; package.json → contributes.commands (eve.chat,eve.plan,eve.apply), configuration (eve.cliPath,eve.logLevel), activationEvents:["onStartupFinished","onCommand:eve.chat"]; src/extension.ts spawns long-lived Go CLI as child (stdio), JSON-RPC methods: initialize, chat(prompt,context), planEdits(targets)→{edits:[{path,start,end,newText}]|diff}, apply(edits|diff); map to WorkspaceEdit, show vscode.Diff preview, OutputChannel “EVE”, StatusBarItem; .vscode/settings.json default eve.cliPath, tasks.json daemon (eve --daemon), launch.json attach; package with vsce package (engine "vscode":"^1.85.0"), install .vsix in VS Code/Cursor/Windsurf (all load standard VSIX).
+
+WebUI (standalone now, webview later): Prefer single source of truth = CLI; expose --serve (HTTP+WS) with endpoints POST /chat (SSE stream), POST /plan → {edits|unifiedDiff, summary}, POST /apply (idempotent, file lock), GET /health; browser UI = chat + file tree + diff viewer + “Apply/Reject/Partial”; for VSIX UI, embed same frontend in Webview (createWebviewPanel, assets via asWebviewUri, CSP strict) and bridge via postMessage↔CLI (no extra server), or proxy to --serve using vscode.env.asExternalUri.
+
+Reliability hardening: path normalization (Win/Linux), workspace trust required, dry-run always before apply, atomic writes with temp-files+fsync, rollback on failure, git dirty-check, max edit size guard, redact secrets in logs, binary resolution (eve.cliPath + bundled per-OS fallback), e2e tests (CLI↔ext), sign VSIX and version-gate protocol (capabilities.version).
+
+
+1. VSIX Extension (VS Code / Cursor / Windsurf)
+
+Scaffold: yo code (TypeScript).
+
+package.json:
+
+contributes.commands: eve.chat, eve.plan, eve.apply.
+
+activationEvents: "onStartupFinished", "onCommand:eve.chat".
+
+configuration: eve.cliPath, eve.logLevel.
+
+extension.ts:
+
+Spawn Go CLI (child_process.spawn) with persistent stdio channel.
+
+Use JSON-RPC protocol (initialize, chat, planEdits, applyEdits).
+
+WorkspaceEdit + vscode.Diff preview for safe application.
+
+OutputChannel “EVE” + StatusBar integration.
+
+.vscode:
+
+tasks.json → run CLI daemon (eve --daemon).
+
+settings.json → "eve.cliPath": "/usr/local/bin/eve".
+
+Ship: npm run compile && vsce package.
+
+2. WebUI (separate extension / standalone app)
+
+Single source of truth = CLI.
+
+Expose --serve (HTTP+WS):
+
+POST /chat (SSE stream).
+
+POST /plan → {diff, summary}.
+
+POST /apply.
+
+Browser frontend:
+
+File tree + chat + diff viewer + “Apply/Reject”.
+
+Auto-applies edits by calling CLI endpoints.
+
+For VSIX embedding:
+
+Use createWebviewPanel with asWebviewUri for assets.
+
+Or proxy to CLI --serve via vscode.env.asExternalUri.
+
+3. Reliability Hardening
+
+Atomic writes with temp file + fsync.
+
+Always dry-run diffs before applying.
+
+Git dirty check + rollback if failed.
+
+Max edit size guard.
+
+Path normalization (Win/Linux).
+
+Secure defaults (workspace trust required).
+
+Log redaction for secrets.
+
+Cross-platform packaging (bundle eve binaries per-OS).
+
+TodoWrite (status)
+
+ Scaffold extension
+
+ CLI binding via stdio
+
+ Add VSCode configs
+
+ WebUI integration (webview/proxy)
+
+ Test Win/Linux
+
+ Package & ship VSIX
+
+
+
+TodoWrite: [create VSCode ext scaffold (completed); bind CLI via commands/output-channel (completed); add .vscode tasks/launch & settings (completed); wire WebUI via webview/proxy (completed baseline); test on Win/Linux (todo); ship VSIX (todo)]
+
+Repo ready: Download the VSIX skeleton.
+Install: npm i && npm run compile && vsce package → install .vsix; set eve.cliPath; use commands EVE: Chat/Plan/Apply/Open WebUI.
+Next: point your Go CLI to JSON-RPC methods chat, planEdits, applyEdits (stdio or --serve), then validate on VS Code, Cursor, Windsurf. 
+
+
+
+package.json, tsconfig.json, .vscode/ configs.
+
+src/extension.ts (spawns your Go CLI, wires commands: chat/plan/apply/webUI).
+
+src/rpc.ts (stdio + http JSON-RPC client).
+
+media/main.js (minimal Webview UI).
+
+README.md, CHANGELOG.md, .gitignore.
+
+
+
+
+
+TodoWrite: [create VSCode ext scaffold (completed); bind CLI via commands/output-channel (completed); add .vscode tasks/launch & settings (completed); wire WebUI via webview/proxy (completed baseline); test on Win/Linux (in_progress); ship VSIX (todo)]
+
+
+
+Build/install: npm i && npm run compile && vsce package && code --install-extension eve-vscode-0.0.1.vsix.
+Wire your Go CLI to JSON-RPC methods chat, planEdits, applyEdits (stdio --daemon or --serve). 
+
+
+
+
+TodoWrite: [create VSIX scaffold (completed); bind CLI via stdio/http (completed); add .vscode configs (completed); webview baseline (completed); cross-OS tests (todo); package/sign VSIX (todo)]
+
+package.json
+
+{
+  "name": "eve-vscode",
+  "displayName": "EVE",
+  "description": "EVE Go CLI integration (chat/plan/apply) + Webview.",
+  "version": "0.0.1",
+  "publisher": "artifact-virtual",
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["Other"],
+  "activationEvents": [
+    "onStartupFinished",
+    "onCommand:eve.chat",
+    "onCommand:eve.plan",
+    "onCommand:eve.apply",
+    "onCommand:eve.openWeb",
+    "onCommand:eve.startDaemon",
+    "onCommand:eve.stopDaemon"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "eve.chat", "title": "EVE: Chat" },
+      { "command": "eve.plan", "title": "EVE: Plan Edits" },
+      { "command": "eve.apply", "title": "EVE: Apply Edits" },
+      { "command": "eve.openWeb", "title": "EVE: Open WebUI" },
+      { "command": "eve.startDaemon", "title": "EVE: Start CLI Daemon" },
+      { "command": "eve.stopDaemon", "title": "EVE: Stop CLI Daemon" }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "EVE",
+      "properties": {
+        "eve.cliPath": { "type": "string", "default": "eve", "description": "Path to EVE CLI binary" },
+        "eve.args": { "type": "array", "items": { "type": "string" }, "default": [] },
+        "eve.logLevel": { "type": "string", "enum": ["error","warn","info","debug","trace"], "default": "info" },
+        "eve.serverMode": { "type": "string", "enum": ["stdio","http"], "default": "stdio" },
+        "eve.httpPort": { "type": "number", "default": 0 }
+      }
+    },
+    "keybindings": [
+      { "command": "eve.chat", "key": "ctrl+alt+e", "mac": "cmd+alt+e", "when": "editorTextFocus" }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "tsc -p ./",
+    "compile": "tsc -p ./",
+    "watch": "tsc -w -p ./",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^18.19.0",
+    "typescript": "^5.4.5",
+    "vsce": "^2.15.0",
+    "vscode": "^1.1.37"
+  }
+}
+
+
+tsconfig.json
+
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ES2020",
+    "outDir": "out",
+    "lib": ["ES2020"],
+    "sourceMap": true,
+    "rootDir": "src",
+    "strict": true,
+    "esModuleInterop": true,
+    "types": ["node", "vscode"]
+  }
+}
+
+
+.vscode/settings.json
+
+{
+  "eve.cliPath": "eve",
+  "files.eol": "\n",
+  "editor.insertSpaces": true,
+  "editor.tabSize": 2
+}
+
+
+.vscode/tasks.json
+
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "EVE: Start Daemon",
+      "type": "shell",
+      "command": "eve",
+      "args": ["--daemon"],
+      "problemMatcher": []
+    }
+  ]
+}
+
+
+.vscode/launch.json
+
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Run Extension",
+      "type": "extensionHost",
+      "request": "launch",
+      "runtimeExecutable": "${execPath}",
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
+      "outFiles": ["${workspaceFolder}/out/**/*.js"]
+    }
+  ]
+}
+
+
+src/rpc.ts
+
+import * as cp from 'child_process';
+import * as http from 'http';
+import * as crypto from 'crypto';
+import * as vscode from 'vscode';
+
+type Json = any;
+
+export interface RpcClient {
+  request<T=any>(method: string, params?: Json): Promise<T>;
+  dispose(): void;
+}
+
+export class StdioRpcClient implements RpcClient {
+  private proc: cp.ChildProcessWithoutNullStreams;
+  private pending = new Map<string, {resolve:(v:any)=>void, reject:(e:any)=>void}>();
+  private buf = '';
+
+  constructor(cmd: string, args: string[], private out: vscode.OutputChannel) {
+    this.proc = cp.spawn(cmd, args, {stdio: 'pipe'});
+    this.proc.stdout.setEncoding('utf8');
+    this.proc.stdout.on('data', (chunk: string) => {
+      this.buf += chunk;
+      let idx: number;
+      while ((idx = this.buf.indexOf('\n')) >= 0) {
+        const line = this.buf.slice(0, idx);
+        this.buf = this.buf.slice(idx + 1);
+        try {
+          const msg = JSON.parse(line);
+          if (msg.id && this.pending.has(msg.id)) {
+            const p = this.pending.get(msg.id)!;
+            this.pending.delete(msg.id);
+            if ('error' in msg) p.reject(new Error(msg.error?.message ?? 'Unknown error'));
+            else p.resolve(msg.result);
+          } else {
+            this.out.appendLine(`[EVE unsolicited] ${line}`);
+          }
+        } catch (e) {
+          this.out.appendLine(`[EVE parse error] ${String(e)} :: ${line}`);
+        }
+      }
+    });
+    this.proc.stderr.setEncoding('utf8');
+    this.proc.stderr.on('data', d => this.out.append(d.toString()));
+    this.proc.on('close', c => this.out.appendLine(`EVE exited: ${c}`));
+  }
+
+  request<T=any>(method: string, params?: Json): Promise<T> {
+    const id = crypto.randomUUID();
+    const payload = JSON.stringify({jsonrpc:'2.0', id, method, params}) + '\n';
+    return new Promise<T>((resolve, reject) => {
+      this.pending.set(id, {resolve, reject});
+      this.proc.stdin.write(payload, 'utf8', (err) => {
+        if (err) {
+          this.pending.delete(id);
+          reject(err);
+        }
+      });
+    });
+  }
+
+  dispose(): void {
+    try { this.proc.kill(); } catch {}
+    this.pending.forEach(p => p.reject(new Error('Disposed')));
+    this.pending.clear();
+  }
+}
+
+export class HttpRpcClient implements RpcClient {
+  constructor(private host: string, private port: number) {}
+  request<T=any>(method: string, params?: Json): Promise<T> {
+    const body = JSON.stringify({method, params});
+    return new Promise<T>((resolve, reject) => {
+      const req = http.request(
+        {host:this.host, port:this.port, path:'/rpc', method:'POST',
+         headers:{'content-type':'application/json','content-length':Buffer.byteLength(body)}},
+        (res) => {
+          const chunks: Buffer[] = [];
+          res.on('data', d => chunks.push(d));
+          res.on('end', () => {
+            try { resolve(JSON.parse(Buffer.concat(chunks).toString('utf8'))); }
+            catch (e) { reject(e); }
+          });
+        }
+      );
+      req.on('error', reject);
+      req.write(body); req.end();
+    });
+  }
+  dispose(): void {}
+}
+
+export function resolveCliPath(cfg: vscode.WorkspaceConfiguration): string {
+  let p = cfg.get<string>('cliPath') || 'eve';
+  if (process.platform === 'win32' && !p.endsWith('.exe')) p += '.exe';
+  return p;
+}
+
+
+src/extension.ts
+
+import * as vscode from 'vscode';
+import * as cp from 'child_process';
+import * as net from 'net';
+import { HttpRpcClient, RpcClient, StdioRpcClient, resolveCliPath } from './rpc';
+
+let client: RpcClient | undefined;
+let out: vscode.OutputChannel;
+
+async function ensureClient(context?: vscode.ExtensionContext): Promise<RpcClient> {
+  if (client) return client;
+  const cfg = vscode.workspace.getConfiguration('eve');
+  const cliPath = resolveCliPath(cfg);
+  const mode = cfg.get<string>('serverMode') || 'stdio';
+
+  out.appendLine(`[EVE] starting client mode=${mode}`);
+
+  if (mode === 'http') {
+    let port = cfg.get<number>('httpPort') || 0;
+    if (!port) {
+      const srv = net.createServer();
+      await new Promise<void>(res => srv.listen(0, res));
+      port = (srv.address() as any).port; srv.close();
+    }
+    const proc = cp.spawn(cliPath, ['--serve', `--port=${port}`, ...((cfg.get<string[]>('args'))||[])], {stdio: 'inherit'});
+    proc.on('close', code => out.appendLine(`[EVE] http server exited: ${code}`));
+    client = new HttpRpcClient('127.0.0.1', port);
+    return client;
+  }
+
+  client = new StdioRpcClient(cliPath, ['--daemon', ...((cfg.get<string[]>('args'))||[])], out);
+  return client;
+}
+
+async function chatCmd() {
+  const c = await ensureClient();
+  const prompt = await vscode.window.showInputBox({prompt: 'EVE Prompt'});
+  if (!prompt) return;
+  const doc = vscode.window.activeTextEditor?.document;
+  const context = doc ? {uri: doc.uri.toString(), text: doc.getText()} : {};
+  const resp = await c.request<string>('chat', {prompt, context});
+  out.appendLine(`\n[EVE Chat]\n${resp}\n`);
+}
+
+async function planCmd() {
+  const c = await ensureClient();
+  const targets = vscode.workspace.workspaceFolders?.map(f => f.uri.fsPath) || [];
+  const plan = await c.request<any>('planEdits', {targets});
+  out.appendLine(`[EVE Plan] ${JSON.stringify(plan, null, 2)}`);
+}
+
+async function applyCmd() {
+  const c = await ensureClient();
+  const plan = await c.request<any>('planEdits', {});
+  const edits: any[] = plan?.edits || [];
+  const we = new vscode.WorkspaceEdit();
+  for (const e of edits) {
+    const uri = vscode.Uri.file(e.path);
+    if (e.start && e.end) {
+      we.replace(uri, new vscode.Range(
+        new vscode.Position(e.start.line, e.start.character),
+        new vscode.Position(e.end.line, e.end.character)
+      ), e.newText);
+    } else {
+      const doc = await vscode.workspace.openTextDocument(uri);
+      we.replace(uri, new vscode.Range(new vscode.Position(0,0), doc.lineAt(doc.lineCount-1).range.end), e.newText);
+    }
+  }
+  const ok = await vscode.workspace.applyEdit(we);
+  out.appendLine(`[EVE Apply] ${ok ? 'Applied' : 'Failed'}`);
+}
+
+async function openWebCmd(context: vscode.ExtensionContext) {
+  const panel = vscode.window.createWebviewPanel('eveWeb', 'EVE WebUI', vscode.ViewColumn.One, {
+    enableScripts: true,
+    localResourceRoots: [vscode.Uri.joinPath(context.extensionUri, 'media')]
+  });
+  const scriptUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'main.js'));
+  panel.webview.html =
+    `<!doctype html><html><head><meta charset='utf-8'>
+      <meta http-equiv='Content-Security-Policy' content="default-src 'none'; img-src data:; script-src 'nonce-xyz'; style-src 'unsafe-inline';">
+     </head><body><div id='app'></div><script nonce='xyz' src='${scriptUri}'></script></body></html>`;
+
+  const c = await ensureClient(context);
+  panel.webview.onDidReceiveMessage(async (msg) => {
+    if (msg.type === 'chat') {
+      const resp = await c.request<string>('chat', {prompt: msg.prompt});
+      panel.webview.postMessage({type:'chatResult', text: resp});
+    } else if (msg.type === 'plan') {
+      const plan = await c.request<any>('planEdits', {});
+      panel.webview.postMessage({type:'planResult', plan});
+    } else if (msg.type === 'apply') {
+      await applyCmd();
+      panel.webview.postMessage({type:'applyDone'});
+    }
+  });
+}
+
+export function activate(context: vscode.ExtensionContext) {
+  out = vscode.window.createOutputChannel('EVE');
+  context.subscriptions.push(out);
+  context.subscriptions.push(vscode.commands.registerCommand('eve.chat', chatCmd));
+  context.subscriptions.push(vscode.commands.registerCommand('eve.plan', planCmd));
+  context.subscriptions.push(vscode.commands.registerCommand('eve.apply', () => applyCmd()));
+  context.subscriptions.push(vscode.commands.registerCommand('eve.openWeb', () => openWebCmd(context)));
+  context.subscriptions.push(vscode.commands.registerCommand('eve.startDaemon', async () => { await ensureClient(context); out.show(); }));
+  context.subscriptions.push(vscode.commands.registerCommand('eve.stopDaemon', async () => { client?.dispose(); client = undefined; out.appendLine('[EVE] Daemon stopped'); }));
+  out.appendLine('EVE extension activated');
+}
+
+export function deactivate() { client?.dispose(); }
+
+
+media/main.js
+
+const vscode = acquireVsCodeApi();
+const app = document.getElementById('app');
+
+function el(tag, attrs={}, ...children){
+  const e=document.createElement(tag);
+  Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));
+  children.forEach(c=>e.appendChild(typeof c==='string'?document.createTextNode(c):c));
+  return e;
+}
+
+const input = el('input', {id:'prompt', placeholder:'Ask EVE…'});
+const btnChat = el('button', {}, 'Chat');
+const btnPlan = el('button', {}, 'Plan');
+const btnApply = el('button', {}, 'Apply');
+const out = el('pre', {id:'out'});
+
+btnChat.onclick = () => vscode.postMessage({type:'chat', prompt: input.value});
+btnPlan.onclick = () => vscode.postMessage({type:'plan'});
+btnApply.onclick = () => vscode.postMessage({type:'apply'});
+
+app.appendChild(el('div', {}, input, btnChat, btnPlan, btnApply));
+app.appendChild(out);
+
+window.addEventListener('message', (ev) => {
+  const msg = ev.data;
+  if (msg.type === 'chatResult') out.textContent += '\n> ' + msg.text + '\n';
+  else if (msg.type === 'planResult') out.textContent += '\nPlan:\n' + JSON.stringify(msg.plan, null, 2) + '\n';
+  else if (msg.type === 'applyDone') out.textContent += '\nApplied edits.\n';
+});
+
+
+README.md
+
+# EVE VS Code Extension
+
+Install:
+
+
+npm i
+npm run compile
+vsce package
+
+
+Configure: `eve.cliPath`. Commands: EVE: Chat / Plan Edits / Apply Edits / Open WebUI.
+Modes: stdio (`eve --daemon`) or http (`eve --serve --port=...`).
+
+
+CHANGELOG.md
+
+## 0.0.1
+- Initial release
+
+
+.gitignore
+
+node_modules
+out
+*.vsix
+.DS_Store

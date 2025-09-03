@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EVE Template - [Page Title]</title>
+
+    <!-- External Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- EVE Theme Styles -->
+    <style>
+        /* EVE Color Palette */
+        :root {
+            --bg-900: #000000; /* AMOLED black */
+            --bg-800: #111827; /* Dark gray */
+            --bg-700: #1f2937; /* Medium gray */
+            --accent-pink: #ec4899; /* Hot pink */
+            --accent-purple: #8b5cf6; /* Purple */
+            --muted: #94a3b8; /* Light gray */
+            --text-white: #ffffff;
+            --border-light: rgba(255,255,255,0.04);
+            --border-medium: rgba(255,255,255,0.08);
+        }
+
+        /* Base Styles */
+        body {
+            background-color: var(--bg-900);
+            color: var(--text-white);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+            line-height: 1.6;
+        }
+
+        /* Glass Morphism Effects */
+        .glass {
+            background: rgba(17,24,39,0.6);
+            border: 1px solid var(--border-light);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            border-radius: 8px;
+        }
+
+        .glass-2 {
+            background: rgba(17,24,39,0.75);
+            border: 1px solid var(--border-medium);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
+        }
+
+        .glass-card {
+            background: rgba(17,24,39,0.8);
+            border: 1px solid var(--border-light);
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        /* Gradient Utilities */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+        }
+
+        .gradient-border {
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            padding: 1px;
+        }
+
+        .gradient-border > * {
+            background: var(--bg-900);
+            border-radius: inherit;
+        }
+
+        /* Navigation Styles */
+        .sidebar {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(100%);
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        /* Animation Classes */
+        .header-hidden {
+            transform: translateY(-100%);
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .slide-up {
+            transform: translateY(30px);
+            opacity: 0;
+            animation: slideUp 0.6s ease-out forwards;
+        }
+
+        .slide-left {
+            transform: translateX(30px);
+            opacity: 0;
+            animation: slideLeft 0.6s ease-out forwards;
+        }
+
+        .slide-right {
+            transform: translateX(-30px);
+            opacity: 0;
+            animation: slideRight 0.6s ease-out forwards;
+        }
+
+        /* Keyframe Animations */
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideLeft {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideRight {
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Hover Effects */
+        .hover-lift {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(236, 72, 153, 0.2);
+        }
+
+        /* Button Styles */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+            color: white;
+            padding: 12px 24px;
+            border-radius: 0px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 16px rgba(236, 72, 153, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--muted);
+            padding: 12px 24px;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 0px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            color: white;
+            border-color: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+        }
+
+        /* Layout Components */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+
+        .footer {
+            background-color: var(--bg-800);
+            border-top: 1px solid var(--border-light);
+            color: var(--muted);
+        }
+
+        .footer-logo {
+            width: 48px;
+            height: 48px;
+        }
+
+        /* Code Styling */
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: rgba(17,24,39,0.5);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: rgba(17,24,39,0.8);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-text {
+                text-align: center;
+                margin-left: 0;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header id="main-header" class="w-full py-10 fixed top-0 left-0 z-50 transition-all duration-300 ease-in-out">
+    <div class="max-w-6xl mx-auto px-6 flex items-start justify-between">
+        <!-- Logo -->
+        <a href="/" class="flex items-start gap-3">
+            <div class="w-16 h-16 flex items-center justify-center">
+                <svg width="48" height="48" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="logoGradient" x1="0" y1="0" x2="250" y2="250" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#EC4899" />
+                            <stop offset="1" stop-color="#8B5CF6" />
+                        </linearGradient>
+                    </defs>
+                    <g class="logo-group">
+                        <path class="path1" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="url(#logoGradient)"/>
+                        <path class="path2" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="none" stroke="url(#logoGradient)" stroke-width="4"/>
+                        <path class="path3" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="none" stroke="white" stroke-width="2" opacity="0.3"/>
+                    </g>
+                </svg>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-xl font-bold gradient-text">EVE</span>
+                <span class="text-xs text-muted -mt-1">AI Assistant</span>
+            </div>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <div class="hidden md:flex flex-col items-end gap-4">
+            <div class="flex gap-4 items-center">
+                <a href="/signin" class="text-sm text-[var(--muted)] hover:text-white transition">Sign in</a>
+                <a href="/get-started" class="btn-primary text-sm">Get started</a>
+            </div>
+            <nav class="flex flex-col items-end gap-2 text-sm text-[var(--muted)]">
+                <a href="/build" class="hover:text-white transition">Build Your Own</a>
+                <a href="/pricing" class="hover:text-white transition">Pricing</a>
+                <a href="/docs" class="hover:text-white transition">Docs</a>
+            </nav>
+        </div>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobileToggle" class="md:hidden p-2 text-[var(--muted)] hover:text-white transition" aria-label="Open mobile menu">
+            <i class="fas fa-bars text-xl"></i>
+        </button>
+    </div>
+</header>
+
+<!-- Mobile Sidebar -->
+<div id="sidebar" class="sidebar fixed top-0 right-0 h-full w-64 glass-2 z-50 flex flex-col items-start p-6 pt-16 space-y-4">
+    <button id="closeSidebar" class="absolute top-4 right-4 text-[var(--muted)] hover:text-white transition" aria-label="Close mobile menu">
+        <i class="fas fa-times text-xl"></i>
+    </button>
+
+    <a href="/get-started" class="btn-primary text-sm w-full justify-center">Get started</a>
+
+    <a href="/build" class="text-sm text-[var(--muted)] hover:text-white transition w-full">Build Your Own</a>
+    <a href="/pricing" class="text-sm text-[var(--muted)] hover:text-white transition w-full">Pricing</a>
+    <a href="/docs" class="text-sm text-[var(--muted)] hover:text-white transition w-full">Docs</a>
+
+    <div class="w-full h-px bg-gray-700 my-4"></div>
+
+    <a href="/signin" class="text-sm text-[var(--muted)] hover:text-white transition w-full">Sign in</a>
+</div>
+
+<!-- Main Content -->
+<main class="min-h-screen flex flex-col pt-32">
+    <!-- Hero Section -->
+    <section class="main-content max-w-6xl mx-auto px-6 py-20 flex-1">
+        <div class="text-center max-w-4xl mx-auto">
+            <h1 class="text-4xl md:text-6xl font-bold leading-tight mb-6 fade-in">
+                <span class="gradient-text">[Your Page Title]</span>
+            </h1>
+            <p class="text-lg text-[var(--muted)] max-w-2xl mx-auto mb-8 slide-up">
+                [Your page description goes here. Describe what this page is about and what users will find.]
+            </p>
+            <div class="flex flex-wrap gap-4 justify-center slide-up">
+                <a href="/get-started" class="btn-primary">
+                    Get Started <i class="fas fa-arrow-right"></i>
+                </a>
+                <a href="/docs" class="btn-secondary">
+                    <i class="fas fa-book"></i> Documentation
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Content Sections -->
+    <section class="max-w-6xl mx-auto px-6 py-16">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Feature Card 1 -->
+            <div class="glass-card p-6 hover-lift slide-left">
+                <div class="w-12 h-12 bg-gradient-to-r from-pink-500 to-purple-500 rounded-lg flex items-center justify-center mb-4">
+                    <i class="fas fa-code text-white text-xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Feature Title</h3>
+                <p class="text-[var(--muted)]">Feature description goes here. Explain what this feature does and why it's valuable.</p>
+            </div>
+
+            <!-- Feature Card 2 -->
+            <div class="glass-card p-6 hover-lift slide-up">
+                <div class="w-12 h-12 bg-gradient-to-r from-pink-500 to-purple-500 rounded-lg flex items-center justify-center mb-4">
+                    <i class="fas fa-brain text-white text-xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Another Feature</h3>
+                <p class="text-[var(--muted)]">Another feature description. Highlight the key benefits and use cases.</p>
+            </div>
+
+            <!-- Feature Card 3 -->
+            <div class="glass-card p-6 hover-lift slide-right">
+                <div class="w-12 h-12 bg-gradient-to-r from-pink-500 to-purple-500 rounded-lg flex items-center justify-center mb-4">
+                    <i class="fas fa-rocket text-white text-xl"></i>
+                </div>
+                <h3 class="text-xl font-semibold mb-3">Third Feature</h3>
+                <p class="text-[var(--muted)]">Third feature description. Show how this improves the user experience.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Content Section 2 -->
+    <section class="max-w-6xl mx-auto px-6 py-16">
+        <div class="glass-card p-8 text-center">
+            <h2 class="text-3xl font-bold mb-6">Section Title</h2>
+            <p class="text-lg text-[var(--muted)] max-w-3xl mx-auto mb-8">
+                This is a content section. You can add any content here - text, images, code examples, etc.
+                The glass card effect creates a beautiful backdrop for your content.
+            </p>
+
+            <!-- Code Example -->
+            <div class="text-left max-w-2xl mx-auto">
+                <pre><code class="language-javascript">// Example code
+function greetUser(name) {
+    console.log(`Hello, ${name}! Welcome to EVE.`);
+}
+
+// Usage
+greetUser('Developer');</code></pre>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="max-w-6xl mx-auto px-6 py-20 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold leading-tight mb-4">
+            Ready to get started?
+        </h2>
+        <p class="text-lg text-[var(--muted)] max-w-xl mx-auto mb-8">
+            Join thousands of developers using EVE to build better software faster.
+        </p>
+        <a href="/get-started" class="btn-primary text-lg">
+            Start Building Today <i class="fas fa-arrow-right"></i>
+        </a>
+    </section>
+</main>
+
+<!-- Footer -->
+<footer class="footer py-12">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center text-sm">
+        <div class="flex items-center space-x-4 mb-6 md:mb-0">
+            <a href="/" class="flex items-center gap-3">
+                <svg class="footer-logo" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="logoGradient" x1="0" y1="0" x2="250" y2="250" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#EC4899" />
+                            <stop offset="1" stop-color="#8B5CF6" />
+                        </linearGradient>
+                    </defs>
+                    <g class="logo-group">
+                        <path class="path1" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="url(#logoGradient)"/>
+                        <path class="path2" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="none" stroke="url(#logoGradient)" stroke-width="4"/>
+                        <path class="path3" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="none" stroke="white" stroke-width="2" opacity="0.3"/>
+                    </g>
+                </svg>
+                <span class="font-semibold">EVE AI</span>
+            </a>
+            <span>&copy; 2024 EVE AI. All rights reserved.</span>
+        </div>
+        <nav class="flex space-x-6">
+            <a href="/docs" class="hover:text-white transition">Docs</a>
+            <a href="/pricing" class="hover:text-white transition">Pricing</a>
+            <a href="/contact" class="hover:text-white transition">Contact</a>
+            <a href="/privacy" class="hover:text-white transition">Privacy</a>
+        </nav>
+    </div>
+</footer>
+
+<!-- JavaScript -->
+<script>
+    // Mobile menu functionality
+    const mobileToggle = document.getElementById('mobileToggle');
+    const closeSidebar = document.getElementById('closeSidebar');
+    const sidebar = document.getElementById('sidebar');
+
+    if (mobileToggle && closeSidebar && sidebar) {
+        mobileToggle.addEventListener('click', () => {
+            sidebar.classList.add('open');
+        });
+
+        closeSidebar.addEventListener('click', () => {
+            sidebar.classList.remove('open');
+        });
+
+        // Close sidebar when clicking links
+        document.querySelectorAll('#sidebar a').forEach(link => {
+            link.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+            });
+        });
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!sidebar.contains(e.target) && !mobileToggle.contains(e.target)) {
+                sidebar.classList.remove('open');
+            }
+        });
+    }
+
+    // Header scroll effect
+    const header = document.getElementById('main-header');
+    if (header) {
+        let lastScrollY = window.scrollY;
+
+        window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
+            if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                // Scrolling down
+                header.classList.add('header-hidden');
+            } else {
+                // Scrolling up
+                header.classList.remove('header-hidden');
+            }
+            lastScrollY = currentScrollY;
+        });
+    }
+
+    // Intersection Observer for animations
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationDelay = '0s';
+            }
+        });
+    }, observerOptions);
+
+    // Observe elements with animation classes
+    document.querySelectorAll('.fade-in, .slide-up, .slide-left, .slide-right').forEach(el => {
+        observer.observe(el);
+    });
+
+    // Smooth scrolling for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Add loading animation to page
+    document.addEventListener('DOMContentLoaded', () => {
+        document.body.classList.add('fade-in');
+    });
+</script>
+
+</body>
+</html>

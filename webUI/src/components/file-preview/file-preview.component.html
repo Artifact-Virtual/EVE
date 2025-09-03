@@ -1,0 +1,65 @@
+<div class="flex h-96 min-h-full">
+  <!-- File Tree Sidebar -->
+  <div class="w-1/3 min-w-[200px] bg-black/30 p-2 overflow-y-auto">
+    <ng-container *ngTemplateOutlet="fileTreeNode; context: { nodes: fileTree(), level: 0 }"></ng-container>
+
+    <ng-template #fileTreeNode let-nodes="nodes" let-level="level">
+      @for(node of nodes; track node.path) {
+        <div [style.paddingLeft.rem]="level * 1">
+          @if (node.type === 'folder') {
+            <div (click)="toggleFolder(node.path)" 
+                 class="flex items-center gap-2 py-1 px-2 rounded cursor-pointer hover:bg-white/10"
+                 [class.text-white]="activeFile()?.path.startsWith(node.path + '/')"
+                 [class.text-gray-300]="!activeFile()?.path.startsWith(node.path + '/')">
+              <i class="fas fa-chevron-right transition-transform" [class.rotate-90]="expandedFolders().has(node.path)"></i>
+              <i class="fas fa-folder text-purple-400"></i>
+              <span>{{ node.name }}</span>
+            </div>
+            @if (expandedFolders().has(node.path)) {
+              <ng-container *ngTemplateOutlet="fileTreeNode; context: { nodes: node.children, level: level + 1 }"></ng-container>
+            }
+          } @else {
+            <div (click)="openFile(node.data)" class="flex items-center gap-2 py-1 px-2 rounded cursor-pointer hover:bg-white/10" [class.bg-purple-500/20]="activeFile()?.path === node.path" [class.text-white]="activeFile()?.path === node.path" [class.text-gray-400]="activeFile()?.path !== node.path">
+              <i class="fas fa-file-code ml-4 text-pink-400/80"></i>
+              <span>{{ node.name }}</span>
+            </div>
+          }
+        </div>
+      }
+    </ng-template>
+  </div>
+
+  <!-- Editor View -->
+  <div class="w-2/3 flex-grow flex flex-col bg-[#1a0b2e]">
+    <!-- Tabs -->
+    @if (openTabs().length > 0) {
+      <div class="flex-shrink-0 bg-gray-900/60 border-b border-gray-700/50 flex overflow-x-auto">
+        @for (tab of openTabs(); track tab.path) {
+          <button 
+            (click)="selectTab(tab)" 
+            class="flex items-center gap-2 px-4 py-2 text-xs border-r border-gray-700/50 whitespace-nowrap"
+            [class.bg-[#1a0b2e]]="activeFile()?.path === tab.path"
+            [class.text-white]="activeFile()?.path === tab.path"
+            [class.text-gray-400]="activeFile()?.path !== tab.path"
+            [class.hover:bg-black/40]="activeFile()?.path !== tab.path"
+            >
+            <i class="fas fa-file-code text-pink-400/80"></i>
+            <span>{{ tab.path.split('/').pop() }}</span>
+            <span (click)="closeTab(tab, $event)" class="ml-2 text-gray-500 hover:text-white w-4 h-4 flex items-center justify-center rounded-full hover:bg-white/10">&times;</span>
+          </button>
+        }
+      </div>
+    }
+
+    <!-- Code Area -->
+    <div class="flex-grow overflow-hidden">
+      @if (activeFile(); as file) {
+        <pre class="overflow-auto !m-0 !p-4 !rounded-none h-full w-full !bg-transparent"><code #codeBlock [class]="'language-' + file.language">{{ file.content }}</code></pre>
+      } @else {
+        <div class="w-full h-full flex items-center justify-center text-gray-500">
+          <p>Select a file to view its content</p>
+        </div>
+      }
+    </div>
+  </div>
+</div>

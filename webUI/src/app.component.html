@@ -1,0 +1,33 @@
+<main class="w-full h-screen animated-gradient flex flex-col relative overflow-hidden">
+  <app-chat class="flex-grow min-h-0 flex flex-col"></app-chat>
+  <app-side-panel></app-side-panel>
+</main>--- START OF FILE src/models/message.model.ts ---
+
+export interface File {
+  path: string;
+  content: string;
+  language: string;
+}
+
+export interface TextPart {
+  type: 'text';
+  content: string;
+}
+
+export interface CodePart {
+  type: 'code';
+  content: string;
+  language?: string;
+}
+
+export interface FilesPart {
+  type: 'files';
+  content: File[];
+}
+
+export type MessagePart = TextPart | CodePart | FilesPart;
+
+export interface Message {
+  sender: 'user' | 'assistant';
+  parts: MessagePart[];
+}

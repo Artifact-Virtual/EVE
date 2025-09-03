@@ -91,8 +91,8 @@
 
 <!-- Header -->
 <header id="main-header" class="w-full py-6 fixed top-0 left-0 z-50 transition-all duration-300 ease-in-out">
-    <div class="max-w-7xl mx-auto px-6 flex items-center justify-start">
-    <a href="/" class="flex items-center" aria-label="EVE Home" title="EVE Home">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        <a href="/" class="flex items-center" aria-label="EVE Home" title="EVE Home">
             <div class="w-12 h-12 flex items-center justify-center">
                 <svg width="36" height="36" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <defs>
@@ -108,6 +108,15 @@
                 </svg>
             </div>
         </a>
+        <nav class="hidden md:flex items-center gap-6 text-sm">
+            <a class="nav-link" href="docs.html">Docs</a>
+            <a class="nav-link" href="getting_started.html">Getting Started</a>
+            <a class="nav-link" href="BUILD_GUIDE.md">Build Your Own</a>
+            <a class="nav-link" href="https://github.com/Artifact-Virtual/EVE" target="_blank" rel="noopener">GitHub <i class="fa-brands fa-github"></i></a>
+        </nav>
+        <button id="mobileToggle" class="md:hidden text-[var(--muted)] hover:text-white" aria-label="Open menu">
+            <i class="fas fa-bars text-2xl"></i>
+        </button>
     </div>
 </header>
 
@@ -175,6 +184,30 @@
                             <a href="https://github.com/Artifact-Virtual/EVE" target="_blank" rel="noopener" class="inline-flex items-center gap-2 text-[var(--accent-pink)] hover:underline text-lg font-semibold">
                                 <i class="fab fa-github"></i> View on GitHub
                             </a>
+                        </div>
+                    </div>
+
+                    <!-- Feature Highlights (concise, professional) -->
+                    <div class="grid md:grid-cols-4 gap-4 mb-10">
+                        <div class="glass-card p-5">
+                            <div class="text-xl mb-2">🛰️</div>
+                            <div class="font-semibold">Multi-Provider</div>
+                            <div class="text-sm text-[var(--muted)]">Anthropic, Gemini, OpenAI via a single interface</div>
+                        </div>
+                        <div class="glass-card p-5">
+                            <div class="text-xl mb-2">🧰</div>
+                            <div class="font-semibold">Rich Tools</div>
+                            <div class="text-sm text-[var(--muted)]">Read, edit, search, run, and integrate</div>
+                        </div>
+                        <div class="glass-card p-5">
+                            <div class="text-xl mb-2">🤝</div>
+                            <div class="font-semibold">Multiplayer</div>
+                            <div class="text-sm text-[var(--muted)]">Team sessions with full action history</div>
+                        </div>
+                        <div class="glass-card p-5">
+                            <div class="text-xl mb-2">🛡️</div>
+                            <div class="font-semibold">Resilient</div>
+                            <div class="text-sm text-[var(--muted)]">Errors handled gracefully; audit-friendly</div>
                         </div>
                     </div>
 

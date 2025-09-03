@@ -20,8 +20,9 @@
 [![Build Status](https://img.shields.io/badge/Build-Passing-32CD32?style=for-the-badge)](Makefile)
 
 [🚀 Quick Start](#-quick-start) • [📚 Documentation](#-documentation) • [🤝 Contributing](#-contributing) • [📄 License](#-license)
-
 </div>
+
+---
 
 ## ✨ What is EVE?
 

@@ -117,6 +117,10 @@
         </div>
         <nav class="flex-1 px-4 pb-6 space-y-1">
             <a href="getting_started.html" class="nav-link" onclick="closeMobileMenu()">Getting Started</a>
+<<<<<<< HEAD
+=======
+            <a href="#multiplayer-collaboration" class="nav-link" onclick="closeMobileMenu()">Multiplayer Collaboration</a>
+>>>>>>> 4421f9b59990eb9ef849bd6e6908aeb5b3777d98
             <a href="#1-system-overview" class="nav-link" onclick="closeMobileMenu()">1. System Overview</a>
             <a href="#2-core-architecture" class="nav-link" onclick="closeMobileMenu()">2. Core Architecture</a>
             <a href="#3-provider-abstraction-layer" class="nav-link" onclick="closeMobileMenu()">3. Provider Abstraction Layer</a>
@@ -143,6 +147,7 @@
                 <div class="sticky top-24 glass-card p-6">
                     <h3 class="text-lg font-semibold mb-4 gradient-text">📚 Technical Docs</h3>
                     <nav class="space-y-1 text-sm">
+                        <a href="#multiplayer-collaboration" class="nav-link">Multiplayer Collaboration</a>
                         <a href="#1-system-overview" class="nav-link">1. System Overview</a>
                         <a href="#2-core-architecture" class="nav-link">2. Core Architecture</a>
                         <a href="#3-provider-abstraction-layer" class="nav-link">3. Provider Abstraction Layer</a>
@@ -173,6 +178,45 @@
                         </div>
                     </div>
                 </section>
+
+                <!-- Multiplayer Collaboration Section -->
+                <section id="multiplayer-collaboration" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">Multiplayer Collaboration</h2>
+                    <div class="glass-card p-6">
+                        <h3 class="subsection-title text-xl font-semibold">Overview</h3>
+                        <p class="text-[var(--muted)] mb-4">
+                            EVE supports real-time and asynchronous multiplayer collaboration. Every action—edits, commands, tool uses—performed by any user in a session is automatically tracked, attributed, and stored. This enables seamless teamwork, full project history, and robust audit trails.
+                        </p>
+                        <h3 class="subsection-title text-xl font-semibold">How It Works</h3>
+                        <ul class="list-disc list-inside space-y-2 text-[var(--muted)] mb-4">
+                            <li>All collaborative actions are logged as <b>Multiplayer Actions</b> in the project database.</li>
+                            <li>Each action is attributed to a user and session, with full details and timestamps.</li>
+                            <li>History can be reviewed, filtered, and exported for audit or teamwork review.</li>
+                        </ul>
+                        <h3 class="subsection-title text-xl font-semibold">How to Use</h3>
+                        <ol class="list-decimal list-inside space-y-2 text-[var(--muted)] mb-4">
+                            <li>Run the full agent: <code>./agent</code> or <code>go run agent.go</code></li>
+                            <li>Invite teammates to join the same project/session (via shared environment or remote access).</li>
+                            <li>All actions are tracked automatically—no extra setup required.</li>
+                            <li>To review collaboration history, use the multiplayer history tool or view the <code>multiplayer/</code> directory in the project database.</li>
+                        </ol>
+                        <h3 class="subsection-title text-xl font-semibold">Demonstration</h3>
+                        <pre class="bg-[rgba(17,24,39,0.8)] p-4 text-[var(--muted)] overflow-x-auto">You: Start a new coding session with my teammate.
+EVE: Multiplayer session started. All actions will be tracked.
+You: Edit main.go to add a new function.
+Teammate: Refactor utils.go for performance.
+EVE: Actions recorded for both users in the session.
+You: Show multiplayer action history.
+EVE: [Displays a list of actions, who performed them, and when.]</pre>
+                        <h3 class="subsection-title text-xl font-semibold">Technical Details</h3>
+                        <ul class="list-disc list-inside space-y-2 text-[var(--muted)]">
+                            <li>Actions are stored in <code>eve_project_data/multiplayer/</code> as structured records.</li>
+                            <li>APIs and CLI tools are available for advanced filtering and export.</li>
+                            <li>See <a href="BUILD_GUIDE.md" class="text-[var(--accent-pink)] hover:underline">Build Guide</a> for more on multiplayer internals.</li>
+                        </ul>
+                    </div>
+                </section>
+                <!-- End Multiplayer Collaboration Section -->
 
                 <!-- Sections populated from TECHNICAL_MANUAL.md -->
                 <section id="1-system-overview" class="content-section mb-12">

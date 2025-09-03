@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EVE Getting Started Handbook</title>
+
+    <!-- External Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- EVE Theme Styles -->
+    <style>
+        /* EVE Color Palette */
+        :root {
+            --bg-900: #000000; /* AMOLED black */
+            --bg-800: #111827; /* Dark gray */
+            --bg-700: #1f2937; /* Medium gray */
+            /* Responsive Design */
+            --accent-purple: #8b5cf6; /* Purple */
+            --muted: #94a3b8; /* Light gray */
+            --text-white: #ffffff;
+            --border-light: rgba(255,255,255,0.04);
+            --border-medium: rgba(255,255,255,0.08);
+        }
+
+        /* Base Styles */
+        body {
+            background-color: var(--bg-900);
+            color: var(--text-white);
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+            line-height: 1.6;
+        }
+
+        /* Glass Morphism Effects */
+        .glass {
+            background: rgba(17,24,39,0.6);
+            border: 1px solid var(--border-light);
+            -webkit-backdrop-filter: blur(8px);
+            backdrop-filter: blur(8px);
+            border-radius: 8px;
+        }
+
+        .glass-2 {
+            background: rgba(17,24,39,0.75);
+            border: 1px solid var(--border-medium);
+            -webkit-backdrop-filter: blur(12px);
+            backdrop-filter: blur(12px);
+            border-radius: 12px;
+        }
+
+        .glass-card {
+            background: rgba(17,24,39,0.8);
+            border: 1px solid var(--border-light);
+            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(16px);
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+
+            /* No rounded corners anywhere */
+            * { border-radius: 0 !important; }
+
+            /* Header fully transparent */
+            #main-header { background: transparent !important; border: none !important; box-shadow: none !important; }
+        }
+
+        /* Gradient Utilities */
+        .gradient-text {
+            background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple));
+    <header id="main-header" class="w-full py-6 fixed top-0 left-0 z-50 transition-all duration-300 ease-in-out">
+        <div class="max-w-7xl mx-auto px-6 flex items-center justify-start">
+            <!-- Logo only -->
+            <a href="/" class="flex items-center">
+                <div class="w-12 h-12 flex items-center justify-center">
+                    <svg width="36" height="36" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="logoGradient" x1="0" y1="0" x2="250" y2="250" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#EC4899" />
+                                <stop offset="1" stop-color="#8B5CF6" />
+                            </linearGradient>
+                        </defs>
+                        <g class="logo-group">
+                            <path class="path1" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="url(#logoGradient)"/>
+                            <path class="path2" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="none" stroke="url(#logoGradient)" stroke-width="4"/>
+                        </g>
+                    </svg>
+                </div>
+            </a>
+        </div>
+    </header>
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 0px;
+            font-weight: 500;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            color: white;
+            border-color: rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+        }
+
+        /* Navigation Styles */
+        .sidebar {
+            transition: transform 0.3s ease-in-out;
+            transform: translateX(100%);
+        }
+
+        .sidebar.open {
+            transform: translateX(0);
+        }
+
+        .nav-link {
+            color: var(--muted);
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            display: block;
+        }
+
+        .nav-link:hover {
+            color: white;
+            background: rgba(255,255,255,0.05);
+        }
+
+        .nav-link.active {
+            color: white;
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1));
+            border-left: 3px solid var(--accent-pink);
+        }
+
+        /* Content Styles */
+        .content-section {
+            scroll-margin-top: 100px;
+        }
+
+        .section-title {
+            color: white;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .subsection-title {
+            color: var(--muted);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Code Styling */
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            background: rgba(17,24,39,0.5);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: rgba(17,24,39,0.8);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 16px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+        }
+
+        /* Table Styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        th {
+            background: rgba(17,24,39,0.5);
+            font-weight: 600;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 0;
+                right: 0;
+                width: 280px;
+                height: 100vh;
+                z-index: 1000;
+                background: var(--bg-800);
+                border-left: 1px solid var(--border-light);
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-800);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-purple);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-pink);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+<!-- Header -->
+<header id="main-header" class="w-full py-6 fixed top-0 left-0 z-50 transition-all duration-300 ease-in-out glass">
+    <div class="max-w-7xl mx-auto px-6 flex items-center justify-between">
+        <!-- Logo -->
+        <a href="/" class="flex items-center gap-3">
+            <div class="w-12 h-12 flex items-center justify-center">
+                <svg width="36" height="36" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="logoGradient" x1="0" y1="0" x2="250" y2="250" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#EC4899" />
+                            <stop offset="1" stop-color="#8B5CF6" />
+                        </linearGradient>
+                    </defs>
+                    <g class="logo-group">
+                        <path class="path1" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="url(#logoGradient)"/>
+                        <path class="path2" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="none" stroke="url(#logoGradient)" stroke-width="4"/>
+                        <path class="path3" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L125 125 Z" fill="none" stroke="white" stroke-width="2" opacity="0.3"/>
+                    </g>
+                </svg>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-xl font-bold gradient-text">EVE</span>
+                <span class="text-xs text-[var(--muted)]">AI Coding Assistant</span>
+            </div>
+        </a>
+
+        <!-- Desktop Navigation -->
+        <nav class="hidden md:flex items-center gap-6">
+            <a href="#overview" class="nav-link">Overview</a>
+            <a href="#prerequisites" class="nav-link">Prerequisites</a>
+            <a href="#installation" class="nav-link">Installation</a>
+            <a href="#configuration" class="nav-link">Configuration</a>
+            <a href="#building" class="nav-link">Building</a>
+            <a href="#running" class="nav-link">Running</a>
+            <a href="#usage" class="nav-link">Usage</a>
+            <a href="#troubleshooting" class="nav-link">Troubleshooting</a>
+        </nav>
+
+        <!-- Mobile Menu Button -->
+        <button id="mobileToggle" class="md:hidden p-2 text-[var(--muted)] hover:text-white transition" aria-label="Open mobile menu">
+            <i class="fas fa-bars text-xl"></i>
+        </button>
+    </div>
+</header>
+
+<!-- Mobile Sidebar -->
+<div id="sidebar" class="sidebar fixed top-0 right-0 w-80 h-full z-50 md:hidden">
+    <div class="flex flex-col h-full bg-[var(--bg-800)] border-l border-[var(--border-light)]">
+        <!-- Close Button -->
+        <div class="flex justify-end p-4">
+            <button id="closeSidebar" class="text-[var(--muted)] hover:text-white transition" aria-label="Close mobile menu">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="flex-1 px-4">
+            <a href="#overview" class="nav-link mb-2" onclick="closeMobileMenu()">✨ Quick Overview</a>
+            <a href="#prerequisites" class="nav-link mb-2" onclick="closeMobileMenu()">�️ Prerequisites</a>
+            <a href="#installation" class="nav-link mb-2" onclick="closeMobileMenu()">🧰 Installation</a>
+            <a href="#configuration" class="nav-link mb-2" onclick="closeMobileMenu()">🧭 Configuration</a>
+            <a href="#building" class="nav-link mb-2" onclick="closeMobileMenu()">🏗️ Building</a>
+            <a href="#running" class="nav-link mb-2" onclick="closeMobileMenu()">⏵ Running</a>
+            <a href="#usage" class="nav-link mb-2" onclick="closeMobileMenu()">�️ Basic Usage</a>
+            <a href="#troubleshooting" class="nav-link mb-2" onclick="closeMobileMenu()">🧯 Troubleshooting</a>
+            <a href="#next-steps" class="nav-link mb-2" onclick="closeMobileMenu()">�️ Next Steps</a>
+            <a href="#support" class="nav-link mb-2" onclick="closeMobileMenu()">� Support</a>
+        </nav>
+    </div>
+</div>
+
+<!-- Main Content -->
+<main class="pt-24 pb-12">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="flex gap-8">
+            <!-- Sidebar Navigation (Desktop) -->
+            <aside class="hidden md:block w-64 flex-shrink-0">
+                <div class="sticky top-24 glass-card p-6">
+                    <h3 class="text-lg font-semibold mb-4 gradient-text">📚 Table of Contents</h3>
+                    <nav class="space-y-2">
+                        <a href="#overview" class="nav-link">🌟 Quick Overview</a>
+                        <a href="#prerequisites" class="nav-link">📋 Prerequisites</a>
+                        <a href="#installation" class="nav-link">🛠️ Installation</a>
+                        <a href="#configuration" class="nav-link">⚙️ Configuration</a>
+                        <a href="#building" class="nav-link">🔨 Building</a>
+                        <a href="#running" class="nav-link">▶️ Running</a>
+                        <a href="#usage" class="nav-link">💬 Basic Usage</a>
+                        <a href="#troubleshooting" class="nav-link">🔧 Troubleshooting</a>
+                        <a href="#next-steps" class="nav-link">🎯 Next Steps</a>
+                        <a href="#support" class="nav-link">📞 Support</a>
+                    </nav>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <div class="flex-1 min-w-0">
+                <!-- Hero Section -->
+                <section class="mb-12">
+                    <div class="text-center mb-8">
+                        <h1 class="text-5xl font-bold mb-4">
+                            <span class="gradient-text">� EVE</span> Getting Started Handbook
+                        </h1>
+                        <p class="text-xl text-[var(--muted)] max-w-3xl mx-auto">
+                            Welcome to <strong>EVE</strong> - your AI-powered coding assistant! This handbook will guide you through setting up and running EVE on your system.
+                        </p>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-6 mb-8">
+                        <div class="glass-card p-6 text-center">
+                            <div class="text-3xl mb-3">🛰️</div>
+                            <h3 class="text-lg font-semibold mb-2">Multi-Provider AI</h3>
+                            <p class="text-sm text-[var(--muted)]">Integrates with Anthropic Claude, Google Gemini, and OpenAI GPT</p>
+                        </div>
+                        <div class="glass-card p-6 text-center">
+                            <div class="text-3xl mb-3">🧰</div>
+                            <h3 class="text-lg font-semibold mb-2">Powerful Tools</h3>
+                            <p class="text-sm text-[var(--muted)]">Code analysis, editing, terminal commands, and API integration</p>
+                        </div>
+                        <div class="glass-card p-6 text-center">
+                            <div class="text-3xl mb-3">🧭</div>
+                            <h3 class="text-lg font-semibold mb-2">Easy Setup</h3>
+                            <p class="text-sm text-[var(--muted)]">Get started quickly with devenv or manual installation</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Content Sections -->
+                <section id="overview" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">✨ Quick Overview</h2>
+                    <div class="glass-card p-6">
+                        <p class="mb-6">EVE is a multi-provider AI coding assistant that integrates with:</p>
+
+                        <div class="grid md:grid-cols-3 gap-4 mb-6">
+                            <div class="text-center p-4 bg-[rgba(236,72,153,0.1)] rounded-lg">
+                                <div class="text-2xl mb-2">�</div>
+                                <h4 class="font-semibold">Anthropic Claude</h4>
+                                <p class="text-sm text-[var(--muted)]">Excellent for complex reasoning and code analysis</p>
+                            </div>
+                            <div class="text-center p-4 bg-[rgba(139,92,246,0.1)] rounded-lg">
+                                <div class="text-2xl mb-2">💡</div>
+                                <h4 class="font-semibold">Google Gemini</h4>
+                                <p class="text-sm text-[var(--muted)]">Fast and efficient for quick tasks</p>
+                            </div>
+                            <div class="text-center p-4 bg-[rgba(59,130,246,0.1)] rounded-lg">
+                                <div class="text-2xl mb-2">🖌️</div>
+                                <h4 class="font-semibold">OpenAI GPT</h4>
+                                <p class="text-sm text-[var(--muted)]">Versatile for creative coding solutions</p>
+                            </div>
+                        </div>
+
+                        <p>EVE provides powerful tools for:</p>
+                        <ul class="list-disc list-inside mt-4 space-y-2 text-[var(--muted)]">
+                            <li>Reading and analyzing code files</li>
+                            <li>Editing code with precision</li>
+                            <li>Executing terminal commands safely</li>
+                            <li>Searching codebases with pattern matching</li>
+                            <li>Making API calls to external services</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="prerequisites" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">�️ Prerequisites</h2>
+                    <div class="glass-card p-6">
+                        <p class="mb-6">Before installing EVE, ensure you have the following:</p>
+
+                        <h3 class="subsection-title text-xl font-semibold">Required Software</h3>
+                        <ul class="list-disc list-inside mb-6 space-y-2 text-[var(--muted)]">
+                            <li><strong>Go 1.24.2 or later</strong> - The core runtime for EVE</li>
+                            <li><strong>Git</strong> - For cloning the repository</li>
+                            <li><strong>At least one AI provider API key</strong> (see Configuration section)</li>
+                        </ul>
+
+                        <h3 class="subsection-title text-xl font-semibold">Optional but Recommended</h3>
+                        <ul class="list-disc list-inside mb-6 space-y-2 text-[var(--muted)]">
+                            <li><strong><a href="https://devenv.sh/" class="text-[var(--accent-pink)] hover:underline">devenv</a></strong> - For reproducible development environment (highly recommended)</li>
+                            <li><strong>ripgrep</strong> - For advanced code searching capabilities</li>
+                        </ul>
+
+                        <h3 class="subsection-title text-xl font-semibold">System Requirements</h3>
+                        <div class="bg-[rgba(17,24,39,0.5)] p-4 rounded-lg">
+                            <ul class="space-y-2 text-[var(--muted)]">
+                                <li><strong>Operating System</strong>: Linux, macOS, or Windows (with WSL)</li>
+                                <li><strong>RAM</strong>: Minimum 4GB, recommended 8GB+</li>
+                                <li><strong>Storage</strong>: 500MB free space for installation and dependencies</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="installation" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">🧰 Installation Methods</h2>
+                    <div class="glass-card p-6">
+                        <p class="mb-6">Choose one of the following installation methods based on your preference:</p>
+
+                        <div class="mb-8">
+                            <h3 class="subsection-title text-xl font-semibold text-green-400">Method 1: Recommended - Using devenv (Easiest)</h3>
+                            <p class="mb-4 text-[var(--muted)]">devenv provides a reproducible development environment with all dependencies pre-configured.</p>
+
+                            <h4 class="font-semibold mb-2">Step 1: Install devenv</h4>
+                            <pre><code># On macOS (using Homebrew)
+brew install devenv
+
+# On Linux
+curl -fsSL https://devenv.sh/install | bash
+
+# On Windows (using Chocolatey)
+choco install devenv</code></pre>
+
+                            <h4 class="font-semibold mb-2">Step 2: Clone and Setup EVE</h4>
+                            <pre><code># Clone the repository
+git clone https://github.com/Artifact-Virtual/EVE.git
+cd EVE
+
+# Enter the development environment
+devenv shell</code></pre>
+
+                            <p class="text-green-400 font-semibold">That's it! devenv will automatically:</p>
+                            <ul class="list-disc list-inside mt-2 space-y-1 text-[var(--muted)]">
+                                <li>Install Go 1.24.2+</li>
+                                <li>Set up all required dependencies</li>
+                                <li>Configure your environment variables</li>
+                                <li>Install additional tools (ripgrep, etc.)</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h3 class="subsection-title text-xl font-semibold text-blue-400">Method 2: Manual Installation</h3>
+                            <p class="mb-4 text-[var(--muted)]">If you prefer manual setup or can't use devenv:</p>
+
+                            <h4 class="font-semibold mb-2">Step 1: Install Go</h4>
+                            <p class="mb-2 text-[var(--muted)]">Download and install Go 1.24.2+ from <a href="https://golang.org/dl/" class="text-[var(--accent-pink)] hover:underline">golang.org</a></p>
+                            <p class="mb-4 text-[var(--muted)]">Verify installation:</p>
+                            <pre><code>go version
+# Should show: go version go1.24.2 or later</code></pre>
+
+                            <h4 class="font-semibold mb-2">Step 2: Clone the Repository</h4>
+                            <pre><code>git clone https://github.com/Artifact-Virtual/EVE.git
+cd EVE</code></pre>
+
+                            <h4 class="font-semibold mb-2">Step 3: Install Dependencies</h4>
+                            <pre><code># Download and install Go modules
+go mod tidy
+
+# Verify dependencies
+go mod verify</code></pre>
+
+                            <h4 class="font-semibold mb-2">Step 4: Install Additional Tools (Optional)</h4>
+                            <pre><code># Install ripgrep for advanced code search
+# On Ubuntu/Debian:
+sudo apt-get install ripgrep
+
+# On macOS:
+brew install ripgrep
+
+# On Windows:
+winget install BurntSushi.ripgrep.MSVC</code></pre>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="configuration" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">🧭 Configuration</h2>
+                    <div class="glass-card p-6">
+                        <p class="mb-6">EVE requires configuration through environment variables. You need at least one AI provider API key.</p>
+
+                        <h3 class="subsection-title text-xl font-semibold">Step 1: Choose Your AI Provider</h3>
+                        <p class="mb-4 text-[var(--muted)]">EVE supports three AI providers. Choose based on your needs:</p>
+
+                        <table class="mb-6">
+                            <thead>
+                                <tr>
+                                    <th>Provider</th>
+                                    <th>Best For</th>
+                                    <th>Setup Difficulty</th>
+                                    <th>Cost</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Anthropic Claude</strong></td>
+                                    <td>Complex reasoning, code analysis</td>
+                                    <td>Easy</td>
+                                    <td>Moderate</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Google Gemini</strong></td>
+                                    <td>Fast tasks, general coding</td>
+                                    <td>Easy</td>
+                                    <td>Low</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>OpenAI GPT</strong></td>
+                                    <td>Creative solutions, versatility</td>
+                                    <td>Easy</td>
+                                    <td>Variable</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h3 class="subsection-title text-xl font-semibold">Step 2: Get API Keys</h3>
+
+                        <div class="grid md:grid-cols-3 gap-6 mb-6">
+                            <div class="bg-[rgba(236,72,153,0.1)] p-4 rounded-lg">
+                                <h4 class="font-semibold mb-2 text-[var(--accent-pink)]">Anthropic Claude (Recommended)</h4>
+                                <ol class="list-decimal list-inside space-y-1 text-sm text-[var(--muted)]">
+                                    <li>Visit <a href="https://console.anthropic.com/" class="text-[var(--accent-pink)] hover:underline">Anthropic Console</a></li>
+                                    <li>Create an account or sign in</li>
+                                    <li>Navigate to API Keys section</li>
+                                    <li>Create a new API key</li>
+                                    <li>Copy the key (format: <code>sk-ant-api03-...</code>)</li>
+                                </ol>
+                            </div>
+
+                            <div class="bg-[rgba(139,92,246,0.1)] p-4 rounded-lg">
+                                <h4 class="font-semibold mb-2 text-[var(--accent-purple)]">Google Gemini</h4>
+                                <ol class="list-decimal list-inside space-y-1 text-sm text-[var(--muted)]">
+                                    <li>Visit <a href="https://makersuite.google.com/app/apikey" class="text-[var(--accent-purple)] hover:underline">Google AI Studio</a></li>
+                                    <li>Sign in with Google account</li>
+                                    <li>Create a new API key</li>
+                                    <li>Copy the key</li>
+                                </ol>
+                            </div>
+
+                            <div class="bg-[rgba(59,130,246,0.1)] p-4 rounded-lg">
+                                <h4 class="font-semibold mb-2 text-blue-400">OpenAI GPT</h4>
+                                <ol class="list-decimal list-inside space-y-1 text-sm text-[var(--muted)]">
+                                    <li>Visit <a href="https://platform.openai.com/api-keys" class="text-blue-400 hover:underline">OpenAI Platform</a></li>
+                                    <li>Create an account or sign in</li>
+                                    <li>Navigate to API Keys</li>
+                                    <li>Create a new secret key</li>
+                                    <li>Copy the key (format: <code>sk-...</code>)</li>
+                                </ol>
+                            </div>
+                        </div>
+
+                        <h3 class="subsection-title text-xl font-semibold">Step 3: Set Environment Variables</h3>
+                        <p class="mb-4 text-[var(--muted)]">Create a <code>.env</code> file in the EVE directory or set environment variables directly:</p>
+                        <pre><code># Choose your provider (anthropic, gemini, or openai)
+export LLM_PROVIDER="anthropic"
+
+# Set your API key (replace with your actual key)
+export ANTHROPIC_API_KEY="your-anthropic-key-here"
+export GEMINI_API_KEY="your-gemini-key-here"
+export OPENAI_API_KEY="your-openai-key-here"
+
+# Optional: Specify model (defaults will be used if not set)
+export LLM_MODEL="claude-3-5-sonnet-20241022"  # For Anthropic
+# export LLM_MODEL="gemini-pro"                 # For Gemini
+# export LLM_MODEL="gpt-4"                      # For OpenAI</code></pre>
+
+                        <h3 class="subsection-title text-xl font-semibold">Step 4: Verify Configuration</h3>
+                        <p class="mb-2 text-[var(--muted)]">Test your configuration:</p>
+                        <pre><code># Check if variables are set
+echo $LLM_PROVIDER
+echo $ANTHROPIC_API_KEY  # (or your chosen provider's key)
+
+# Should show your configured values</code></pre>
+                    </div>
+                </section>
+
+                <section id="building" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">🏗️ Building EVE</h2>
+                    <div class="glass-card p-6">
+                        <p class="mb-6">Once configured, build EVE using the provided Makefile:</p>
+
+                        <h3 class="subsection-title text-xl font-semibold">Build All Components</h3>
+                        <pre><code># Build all EVE binaries
+make build
+
+# Or build everything with formatting and checks
+make all</code></pre>
+
+                        <p class="mb-4 text-[var(--muted)]">This will create several executable files:</p>
+                        <ul class="list-disc list-inside mb-6 space-y-2 text-[var(--muted)]">
+                            <li><code>agent</code> - Full-featured multi-provider agent</li>
+                            <li><code>chat</code> - Basic chat interface</li>
+                            <li><code>read</code> - File reading capabilities</li>
+                            <li><code>list_files</code> - Directory exploration</li>
+                            <li><code>bash_tool</code> - Terminal command execution</li>
+                            <li><code>edit_tool</code> - File editing capabilities</li>
+                        </ul>
+
+                        <h3 class="subsection-title text-xl font-semibold">Individual Build Commands</h3>
+                        <pre><code># Build specific components
+go build -o agent agent.go
+go build -o chat chat.go
+go build -o read read.go
+go build -o list_files list_files.go
+go build -o bash_tool bash_tool.go
+go build -o edit_tool edit_tool.go</code></pre>
+
+                        <h3 class="subsection-title text-xl font-semibold">Verify Build</h3>
+                        <pre><code># Check if binaries were created
+ls -la agent chat read list_files bash_tool edit_tool
+
+# Should show executable files (green on Linux/macOS)</code></pre>
+                    </div>
+                </section>
+
+                <section id="running" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">⏵ Running EVE</h2>
+                    <div class="glass-card p-6">
+                        <p class="mb-6">Now you're ready to run EVE! Start with the basic chat interface to get familiar.</p>
+
+                        <h3 class="subsection-title text-xl font-semibold">Basic Chat Interface</h3>
+                        <pre><code># Start the basic chat interface
+./chat
+
+# Or using go run
+go run chat.go</code></pre>
+
+                        <p class="mb-4 text-[var(--muted)]">You should see:</p>
+                        <pre><code>🌸 EVE - AI Coding Assistant 🌸
+Provider: anthropic
+Model: claude-3-5-sonnet-20241022
+
+You: [Your message here]</code></pre>
+
+                        <h3 class="subsection-title text-xl font-semibold">Full-Featured Agent</h3>
+                        <p class="mb-4 text-[var(--muted)]">For the complete EVE experience with all tools:</p>
+                        <pre><code># Run the full agent
+./agent
+
+# Or using go run
+go run agent.go</code></pre>
+
+                        <h3 class="subsection-title text-xl font-semibold">Individual Tools</h3>
+                        <p class="mb-4 text-[var(--muted)]">Test specific capabilities:</p>
+                        <pre><code># File reading and analysis
+./read
+
+# Directory exploration
+./list_files
+
+# Terminal command execution
+./bash_tool
+
+# File editing
+./edit_tool</code></pre>
+                    </div>
+                </section>
+
+                <section id="usage" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">�️ Basic Usage</h2>
+                    <div class="glass-card p-6">
+                        <p class="mb-6">Let's walk through some basic interactions with EVE:</p>
+
+                        <div class="space-y-6">
+                            <div>
+                                <h4 class="font-semibold mb-2 text-[var(--accent-pink)]">Example 1: Simple Chat</h4>
+                                <pre><code>You: Hello EVE, can you help me write a Go function?
+
+EVE: Hello! I'd be happy to help you write a Go function. What kind of function are you looking for? Please provide some details about what it should do.</code></pre>
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold mb-2 text-[var(--accent-purple)]">Example 2: File Analysis</h4>
+                                <pre><code>You: Can you read the README.md file and summarize what EVE does?
+
+EVE: I'll read the README.md file for you...
+
+[Reading file contents...]
+
+Based on the README.md, EVE is a multi-provider AI coding assistant that integrates with Anthropic Claude, Google Gemini, and OpenAI. It provides powerful tools for code analysis, editing, terminal operations, and more.</code></pre>
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold mb-2 text-blue-400">Example 3: Code Editing</h4>
+                                <pre><code>You: Add error handling to this function: func connect() { db, _ := sql.Open("sqlite3", "test.db") }
+
+EVE: I'll help you add proper error handling to your database connection function. Let me analyze the current code and make the necessary improvements...
+
+[Making targeted edits to add error handling]</code></pre>
+                            </div>
+
+                            <div>
+                                <h4 class="font-semibold mb-2 text-green-400">Example 4: Terminal Commands</h4>
+                                <pre><code>You: Run the Go tests and show me the results
+
+EVE: I'll execute the test command for you.
+
+[Running: go test ./... -v]
+
+Test Results:
+PASS: 15 tests passed
+FAIL: 2 tests failed (details below)
+...</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="troubleshooting" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">🧯 Troubleshooting</h2>
+                    <div class="glass-card p-6">
+                        <h3 class="subsection-title text-xl font-semibold">Common Issues and Solutions</h3>
+
+                        <div class="space-y-6">
+                            <div class="border-l-4 border-red-500 pl-4">
+                                <h4 class="font-semibold text-red-400 mb-2">1. "API key not found" Error</h4>
+                                <p class="text-[var(--muted)] mb-2"><strong>Problem</strong>: EVE can't find your API key</p>
+                                <p class="text-[var(--muted)] mb-2"><strong>Solution</strong>:</p>
+                                <pre><code># Check if environment variable is set
+echo $ANTHROPIC_API_KEY
+
+# If empty, set it again
+export ANTHROPIC_API_KEY="your-key-here"</code></pre>
+                            </div>
+
+                            <div class="border-l-4 border-orange-500 pl-4">
+                                <h4 class="font-semibold text-orange-400 mb-2">2. "Unsupported provider" Error</h4>
+                                <p class="text-[var(--muted)] mb-2"><strong>Problem</strong>: Invalid provider specified</p>
+                                <p class="text-[var(--muted)] mb-2"><strong>Solution</strong>:</p>
+                                <pre><code># Check valid options
+export LLM_PROVIDER="anthropic"  # Options: anthropic, gemini, openai</code></pre>
+                            </div>
+
+                            <div class="border-l-4 border-yellow-500 pl-4">
+                                <h4 class="font-semibold text-yellow-400 mb-2">3. "Command not found" Error</h4>
+                                <p class="text-[var(--muted)] mb-2"><strong>Problem</strong>: EVE binaries not built or not in PATH</p>
+                                <p class="text-[var(--muted)] mb-2"><strong>Solution</strong>:</p>
+                                <pre><code># Build the binaries
+make build
+
+# Run with full path
+./agent</code></pre>
+                            </div>
+
+                            <div class="border-l-4 border-blue-500 pl-4">
+                                <h4 class="font-semibold text-blue-400 mb-2">4. "Go version too old" Error</h4>
+                                <p class="text-[var(--muted)] mb-2"><strong>Problem</strong>: Go version is below 1.24.2</p>
+                                <p class="text-[var(--muted)] mb-2"><strong>Solution</strong>:</p>
+                                <pre><code># Check current version
+go version
+
+# Update Go to 1.24.2+ from https://golang.org/dl/</code></pre>
+                            </div>
+
+                            <div class="border-l-4 border-purple-500 pl-4">
+                                <h4 class="font-semibold text-purple-400 mb-2">5. Network/Proxy Issues</h4>
+                                <p class="text-[var(--muted)] mb-2"><strong>Problem</strong>: Can't connect to AI provider APIs</p>
+                                <p class="text-[var(--muted)] mb-2"><strong>Solution</strong>:</p>
+                                <pre><code># Check internet connection
+ping google.com
+
+# If behind proxy, set proxy environment variables
+export HTTP_PROXY="http://proxy.company.com:8080"
+export HTTPS_PROXY="http://proxy.company.com:8080"</code></pre>
+                            </div>
+
+                            <div class="border-l-4 border-green-500 pl-4">
+                                <h4 class="font-semibold text-green-400 mb-2">6. Permission Denied</h4>
+                                <p class="text-[var(--muted)] mb-2"><strong>Problem</strong>: Can't execute binaries</p>
+                                <p class="text-[var(--muted)] mb-2"><strong>Solution</strong>:</p>
+                                <pre><code># Make binaries executable
+chmod +x agent chat read list_files bash_tool edit_tool</code></pre>
+                            </div>
+                        </div>
+
+                        <h3 class="subsection-title text-xl font-semibold">Getting Help</h3>
+                        <p class="text-[var(--muted)]">If you encounter issues not covered here:</p>
+                        <ul class="list-disc list-inside mt-4 space-y-2 text-[var(--muted)]">
+                            <li><strong>Check the logs</strong> - EVE provides detailed logging</li>
+                            <li><strong>Verify your setup</strong> - Run <code>make check</code> to validate your installation</li>
+                            <li><strong>Test with simple commands</strong> - Start with basic chat before full agent</li>
+                            <li><strong>Check API key validity</strong> - Ensure your API keys are active and have credits</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <section id="next-steps" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">�️ Next Steps</h2>
+                    <div class="glass-card p-6">
+                        <p class="mb-6">Now that you have EVE running, here are some recommended next steps:</p>
+
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="subsection-title text-xl font-semibold text-[var(--accent-pink)]">1. Explore Advanced Features</h3>
+                                <ul class="list-disc list-inside space-y-2 text-[var(--muted)]">
+                                    <li>Try the full agent with all tools enabled</li>
+                                    <li>Experiment with different AI providers</li>
+                                    <li>Use EVE for real coding tasks</li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h3 class="subsection-title text-xl font-semibold text-[var(--accent-purple)]">2. Customize Your Setup</h3>
+                                <ul class="list-disc list-inside space-y-2 text-[var(--muted)]">
+                                    <li>Configure your preferred AI model</li>
+                                    <li>Set up multiple providers for comparison</li>
+                                    <li>Create aliases for common commands</li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h3 class="subsection-title text-xl font-semibold text-blue-400">3. Learn More</h3>
+                                <ul class="list-disc list-inside space-y-2 text-[var(--muted)]">
+                                    <li>Read the <a href="TECHNICAL_MANUAL.md" class="text-blue-400 hover:underline">Technical Manual</a> for in-depth understanding</li>
+                                    <li>Check out example usage in the <code>examples/</code> directory</li>
+                                    <li>Join the community discussions</li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h3 class="subsection-title text-xl font-semibold text-green-400">4. Contribute</h3>
+                                <ul class="list-disc list-inside space-y-2 text-[var(--muted)]">
+                                    <li>Report bugs or request features</li>
+                                    <li>Submit pull requests for improvements</li>
+                                    <li>Help improve documentation</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="support" class="content-section mb-12">
+                    <h2 class="section-title text-3xl font-bold">� Support</h2>
+                    <div class="glass-card p-6">
+                        <div class="grid md:grid-cols-2 gap-6">
+                            <div>
+                                <h3 class="subsection-title text-xl font-semibold">Documentation</h3>
+                                <ul class="space-y-2 text-[var(--muted)]">
+                                    <li><a href="TECHNICAL_MANUAL.md" class="text-[var(--accent-pink)] hover:underline">📖 Technical Manual</a> - In-depth understanding</li>
+                                    <li><a href="README.md" class="text-[var(--accent-pink)] hover:underline">📚 README</a> - Project overview</li>
+                                </ul>
+                            </div>
+
+                            <div>
+                                <h3 class="subsection-title text-xl font-semibold">Community</h3>
+                                <ul class="space-y-2 text-[var(--muted)]">
+                                    <li><a href="https://github.com/Artifact-Virtual/EVE/issues" class="text-[var(--accent-purple)] hover:underline">🐛 Issues</a> - Report bugs</li>
+                                    <li><a href="https://github.com/Artifact-Virtual/EVE/discussions" class="text-[var(--accent-purple)] hover:underline">💬 Discussions</a> - Community support</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 p-6 bg-gradient-to-r from-[rgba(236,72,153,0.1)] to-[rgba(139,92,246,0.1)] rounded-lg text-center">
+                            <p class="text-lg font-semibold mb-2">Happy coding with EVE! 🚀</p>
+                            <p class="text-[var(--muted)]">Your AI-powered coding assistant is ready to help you build amazing things.</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer class="bg-[var(--bg-800)] border-t border-[var(--border-light)] py-8 mt-12">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center gap-3 mb-4 md:mb-0">
+                <svg width="32" height="32" viewBox="0 0 250 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="footerLogoGradient" x1="0" y1="0" x2="250" y2="250" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#EC4899" />
+                            <stop offset="1" stop-color="#8B5CF6" />
+                        </linearGradient>
+                    </defs>
+                    <g class="logo-group">
+                        <path class="path1" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="url(#footerLogoGradient)"/>
+                        <path class="path2" d="M75 50 L175 50 L175 125 L125 125 L125 200 L75 200 L75 125 L125 125 Z" fill="none" stroke="url(#footerLogoGradient)" stroke-width="4"/>
+                    </g>
+                </svg>
+                <div>
+                    <div class="text-lg font-bold gradient-text">EVE</div>
+                    <div class="text-xs text-[var(--muted)]">AI Coding Assistant</div>
+                </div>
+            </div>
+
+            <div class="text-center md:text-right">
+                <p class="text-[var(--muted)] text-sm">
+                    Built with ❤️ for developers by developers
+                </p>
+                <p class="text-[var(--muted)] text-xs mt-1">
+                    © 2025 Artifact Virtual. Open source and free.
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- JavaScript -->
+<script>
+    // Mobile menu functionality
+    const mobileToggle = document.getElementById('mobileToggle');
+    const sidebar = document.getElementById('sidebar');
+    const closeSidebar = document.getElementById('closeSidebar');
+
+    function openMobileMenu() {
+        sidebar.classList.remove('hidden');
+        setTimeout(() => {
+            sidebar.classList.remove('sidebar');
+            sidebar.classList.add('open');
+        }, 10);
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeMobileMenu() {
+        sidebar.classList.remove('open');
+        sidebar.classList.add('sidebar');
+        setTimeout(() => {
+            sidebar.classList.add('hidden');
+        }, 300);
+        document.body.style.overflow = '';
+    }
+
+    mobileToggle.addEventListener('click', openMobileMenu);
+    closeSidebar.addEventListener('click', closeMobileMenu);
+
+    // Close mobile menu when clicking outside
+    sidebar.addEventListener('click', (e) => {
+        if (e.target === sidebar) {
+            closeMobileMenu();
+        }
+    });
+
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                target.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        });
+    });
+
+    // Update active navigation link on scroll
+    const navLinks = document.querySelectorAll('.nav-link[href^="#"]');
+    const sections = document.querySelectorAll('.content-section');
+
+    function updateActiveNavLink() {
+        const scrollPosition = window.scrollY + 100;
+
+        sections.forEach(section => {
+            const sectionTop = section.offsetTop;
+            const sectionHeight = section.offsetHeight;
+            const sectionId = section.getAttribute('id');
+
+            if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${sectionId}`) {
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
+    }
+
+    window.addEventListener('scroll', updateActiveNavLink);
+    updateActiveNavLink(); // Initial call
+
+    // Header scroll effect
+    const header = document.getElementById('main-header');
+    let lastScrollY = window.scrollY;
+
+    window.addEventListener('scroll', () => {
+        const currentScrollY = window.scrollY;
+
+        if (currentScrollY > lastScrollY && currentScrollY > 100) {
+            header.style.transform = 'translateY(-100%)';
+        } else {
+            header.style.transform = 'translateY(0)';
+        }
+
+        lastScrollY = currentScrollY;
+    });
+
+    // Copy code functionality
+    document.querySelectorAll('pre').forEach(pre => {
+        const copyButton = document.createElement('button');
+        copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+        copyButton.className = 'copy-button';
+        copyButton.style.cssText = `
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background: rgba(17,24,39,0.8);
+            border: 1px solid var(--border-light);
+            color: var(--muted);
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        `;
+
+        copyButton.addEventListener('mouseenter', () => {
+            copyButton.style.color = 'white';
+            copyButton.style.borderColor = 'rgba(255,255,255,0.3)';
+        });
+
+        copyButton.addEventListener('mouseleave', () => {
+            copyButton.style.color = 'var(--muted)';
+            copyButton.style.borderColor = 'var(--border-light)';
+        });
+
+        copyButton.addEventListener('click', () => {
+            const code = pre.querySelector('code');
+            if (code) {
+                navigator.clipboard.writeText(code.textContent).then(() => {
+                    copyButton.innerHTML = '<i class="fas fa-check"></i>';
+                    copyButton.style.color = '#10b981';
+                    setTimeout(() => {
+                        copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+                        copyButton.style.color = 'var(--muted)';
+                    }, 2000);
+                });
+            }
+        });
+
+        pre.style.position = 'relative';
+        pre.appendChild(copyButton);
+    });
+</script>
+
+</body>
+</html>

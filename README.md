@@ -27,20 +27,6 @@ Built with a clean provider abstraction layer, EVE gives you the flexibility to 
 
 ---
 
-## ✨ What is EVE?
-
-**EVE** is a sophisticated, AI-powered coding assistant that seamlessly integrates with multiple AI providers (Anthropic Claude, Google Gemini, OpenAI) to help you:
-
-- **🔍 Read & Analyze** code files and project structures
-- **✏️ Edit & Modify** code with precision and safety
-- **⚡ Execute Commands** safely in your terminal
-- **🔎 Search Codebase** with powerful pattern matching
-- **🔄 Switch Providers** on-the-fly for optimal performance
-
-Built with a clean provider abstraction layer, EVE gives you the flexibility to choose the best AI model for your specific coding tasks while maintaining a consistent, powerful interface.
-
----
-
 ## 🚀 Key Features
 
 ### 🤖 Multi-Provider Support

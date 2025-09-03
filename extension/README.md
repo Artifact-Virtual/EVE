@@ -1,29 +1,8 @@
-# EVE VS Code Extension
-
 The EVE VS Code extension integrates the EVE Go CLI for chat, planning, and applying edits directly in your editor. It supports both stdio and HTTP modes for the CLI daemon.
 
 ## Installation
 
-1. Clone or download the extension source.
-2. Install dependencies:
-
-   ```bash
-   npm install
-   ```
-
-3. Compile the extension:
-
-   ```bash
-   npm run compile
-   ```
-
-4. Package the extension:
-
-   ```bash
-   npm run package
-   ```
-
-5. Install the generated `.vsix` file in VS Code via `Extensions > Install from VSIX...`.
+- Install the generated `.vsix` file in VS Code via `Extensions > Install from VSIX...`.
 
 ## Configuration
 

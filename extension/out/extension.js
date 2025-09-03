@@ -37,103 +37,148 @@ exports.activate = activate;
 exports.deactivate = deactivate;
 const vscode = __importStar(require("vscode"));
 const cp = __importStar(require("child_process"));
-const net = __importStar(require("net"));
 const rpc_1 = require("./rpc");
-let client;
 let out;
-async function ensureClient(context) {
-    if (client)
-        return client;
+async function chatCmd() {
     const cfg = vscode.workspace.getConfiguration('eve');
     const cliPath = (0, rpc_1.resolveCliPath)(cfg);
-    const mode = cfg.get('serverMode') || 'stdio';
-    out.appendLine(`[EVE] starting client mode=${mode}`);
-    if (mode === 'http') {
-        let port = cfg.get('httpPort') || 0;
-        if (!port) {
-            const srv = net.createServer();
-            await new Promise(res => srv.listen(0, res));
-            port = srv.address().port;
-            srv.close();
-        }
-        const proc = cp.spawn(cliPath, ['--serve', `--port=${port}`, ...((cfg.get('args')) || [])], { stdio: 'inherit' });
-        proc.on('close', code => out.appendLine(`[EVE] http server exited: ${code}`));
-        client = new rpc_1.HttpRpcClient('127.0.0.1', port);
-        return client;
-    }
-    client = new rpc_1.StdioRpcClient(cliPath, ['--daemon', ...((cfg.get('args')) || [])], out);
-    return client;
-}
-async function chatCmd() {
-    const c = await ensureClient();
     const prompt = await vscode.window.showInputBox({ prompt: 'EVE Prompt' });
     if (!prompt)
         return;
+    // Get active document context if available
     const doc = vscode.window.activeTextEditor?.document;
-    const context = doc ? { uri: doc.uri.toString(), text: doc.getText() } : {};
-    const resp = await c.request('chat', { prompt, context });
-    out.appendLine(`\n[EVE Chat]\n${resp}\n`);
-}
-async function planCmd() {
-    const c = await ensureClient();
-    const targets = vscode.workspace.workspaceFolders?.map(f => f.uri.fsPath) || [];
-    const plan = await c.request('planEdits', { targets });
-    out.appendLine(`[EVE Plan] ${JSON.stringify(plan, null, 2)}`);
-}
-async function applyCmd() {
-    const c = await ensureClient();
-    const plan = await c.request('planEdits', {});
-    const edits = plan?.edits || [];
-    const we = new vscode.WorkspaceEdit();
-    for (const e of edits) {
-        const uri = vscode.Uri.file(e.path);
-        if (e.start && e.end) {
-            we.replace(uri, new vscode.Range(new vscode.Position(e.start.line, e.start.character), new vscode.Position(e.end.line, e.end.character)), e.newText);
-        }
-        else {
-            const doc = await vscode.workspace.openTextDocument(uri);
-            we.replace(uri, new vscode.Range(new vscode.Position(0, 0), doc.lineAt(doc.lineCount - 1).range.end), e.newText);
-        }
+    let contextualPrompt = prompt;
+    if (doc) {
+        const fileName = doc.fileName;
+        const selectedText = vscode.window.activeTextEditor?.selection && !vscode.window.activeTextEditor.selection.isEmpty
+            ? doc.getText(vscode.window.activeTextEditor.selection)
+            : doc.getText();
+        contextualPrompt = `File: ${fileName}\n\nContent:\n${selectedText}\n\nUser request: ${prompt}`;
     }
-    const ok = await vscode.workspace.applyEdit(we);
-    out.appendLine(`[EVE Apply] ${ok ? 'Applied' : 'Failed'}`);
+    try {
+        out.appendLine(`[EVE] Starting chat with prompt: ${prompt}`);
+        out.show();
+        const proc = cp.spawn(cliPath, [...((cfg.get('args')) || [])], {
+            stdio: 'pipe',
+            cwd: vscode.workspace.workspaceFolders?.[0]?.uri.fsPath
+        });
+        proc.stdin.write(contextualPrompt + '\n');
+        proc.stdin.end();
+        let output = '';
+        proc.stdout.setEncoding('utf8');
+        proc.stdout.on('data', (data) => {
+            output += data;
+            out.append(data);
+        });
+        proc.stderr.setEncoding('utf8');
+        proc.stderr.on('data', (data) => {
+            out.append(`[EVE Error] ${data}`);
+        });
+        proc.on('close', (code) => {
+            out.appendLine(`\n[EVE] Process exited with code ${code}`);
+        });
+        proc.on('error', (err) => {
+            out.appendLine(`[EVE] Error: ${err.message}`);
+            vscode.window.showErrorMessage(`EVE Error: ${err.message}`);
+        });
+    }
+    catch (error) {
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        out.appendLine(`[EVE] Error: ${errorMsg}`);
+        vscode.window.showErrorMessage(`EVE Error: ${errorMsg}`);
+    }
 }
-async function openWebCmd(context) {
-    const panel = vscode.window.createWebviewPanel('eveWeb', 'EVE WebUI', vscode.ViewColumn.One, {
-        enableScripts: true,
-        localResourceRoots: [vscode.Uri.joinPath(context.extensionUri, 'media')]
-    });
-    const scriptUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(context.extensionUri, 'media', 'main.js'));
-    panel.webview.html =
-        `<!doctype html><html><head><meta charset='utf-8'>
-      <meta http-equiv='Content-Security-Policy' content="default-src 'none'; img-src data:; script-src 'nonce-xyz'; style-src 'unsafe-inline';">
-     </head><body><div id='app'></div><script nonce='xyz' src='${scriptUri}'></script></body></html>`;
-    const c = await ensureClient(context);
-    panel.webview.onDidReceiveMessage(async (msg) => {
-        if (msg.type === 'chat') {
-            const resp = await c.request('chat', { prompt: msg.prompt });
-            panel.webview.postMessage({ type: 'chatResult', text: resp });
-        }
-        else if (msg.type === 'plan') {
-            const plan = await c.request('planEdits', {});
-            panel.webview.postMessage({ type: 'planResult', plan });
-        }
-        else if (msg.type === 'apply') {
-            await applyCmd();
-            panel.webview.postMessage({ type: 'applyDone' });
-        }
-    });
+async function quickFixCmd() {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        vscode.window.showWarningMessage('No active editor found');
+        return;
+    }
+    const document = editor.document;
+    const selection = editor.selection;
+    const selectedText = selection.isEmpty ? document.getText() : document.getText(selection);
+    const prompt = `Please analyze and fix any issues in this code:\n\n${selectedText}`;
+    // Simulate chat command with auto-generated prompt
+    const cfg = vscode.workspace.getConfiguration('eve');
+    const cliPath = (0, rpc_1.resolveCliPath)(cfg);
+    try {
+        out.appendLine(`[EVE] Quick fix analysis for ${document.fileName}`);
+        out.show();
+        const proc = cp.spawn(cliPath, [...((cfg.get('args')) || [])], {
+            stdio: 'pipe',
+            cwd: vscode.workspace.workspaceFolders?.[0]?.uri.fsPath
+        });
+        proc.stdin.write(prompt + '\n');
+        proc.stdin.end();
+        proc.stdout.setEncoding('utf8');
+        proc.stdout.on('data', (data) => {
+            out.append(data);
+        });
+        proc.stderr.setEncoding('utf8');
+        proc.stderr.on('data', (data) => {
+            out.append(`[EVE Error] ${data}`);
+        });
+        proc.on('close', (code) => {
+            out.appendLine(`\n[EVE] Analysis complete (exit code ${code})`);
+        });
+    }
+    catch (error) {
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        out.appendLine(`[EVE] Error: ${errorMsg}`);
+        vscode.window.showErrorMessage(`EVE Error: ${errorMsg}`);
+    }
+}
+async function explainCodeCmd() {
+    const editor = vscode.window.activeTextEditor;
+    if (!editor) {
+        vscode.window.showWarningMessage('No active editor found');
+        return;
+    }
+    const document = editor.document;
+    const selection = editor.selection;
+    const selectedText = selection.isEmpty ? document.getText() : document.getText(selection);
+    const prompt = `Please explain what this code does:\n\n${selectedText}`;
+    const cfg = vscode.workspace.getConfiguration('eve');
+    const cliPath = (0, rpc_1.resolveCliPath)(cfg);
+    try {
+        out.appendLine(`[EVE] Explaining code from ${document.fileName}`);
+        out.show();
+        const proc = cp.spawn(cliPath, [...((cfg.get('args')) || [])], {
+            stdio: 'pipe',
+            cwd: vscode.workspace.workspaceFolders?.[0]?.uri.fsPath
+        });
+        proc.stdin.write(prompt + '\n');
+        proc.stdin.end();
+        proc.stdout.setEncoding('utf8');
+        proc.stdout.on('data', (data) => {
+            out.append(data);
+        });
+        proc.stderr.setEncoding('utf8');
+        proc.stderr.on('data', (data) => {
+            out.append(`[EVE Error] ${data}`);
+        });
+        proc.on('close', (code) => {
+            out.appendLine(`\n[EVE] Explanation complete (exit code ${code})`);
+        });
+    }
+    catch (error) {
+        const errorMsg = error instanceof Error ? error.message : String(error);
+        out.appendLine(`[EVE] Error: ${errorMsg}`);
+        vscode.window.showErrorMessage(`EVE Error: ${errorMsg}`);
+    }
 }
 function activate(context) {
     out = vscode.window.createOutputChannel('EVE');
     context.subscriptions.push(out);
     context.subscriptions.push(vscode.commands.registerCommand('eve.chat', chatCmd));
-    context.subscriptions.push(vscode.commands.registerCommand('eve.plan', planCmd));
-    context.subscriptions.push(vscode.commands.registerCommand('eve.apply', () => applyCmd()));
-    context.subscriptions.push(vscode.commands.registerCommand('eve.openWeb', () => openWebCmd(context)));
-    context.subscriptions.push(vscode.commands.registerCommand('eve.startDaemon', async () => { await ensureClient(context); out.show(); }));
-    context.subscriptions.push(vscode.commands.registerCommand('eve.stopDaemon', async () => { client?.dispose(); client = undefined; out.appendLine('[EVE] Daemon stopped'); }));
+    context.subscriptions.push(vscode.commands.registerCommand('eve.quickFix', quickFixCmd));
+    context.subscriptions.push(vscode.commands.registerCommand('eve.explainCode', explainCodeCmd));
     out.appendLine('EVE extension activated');
+    out.appendLine('Available commands: EVE: Chat, EVE: Quick Fix, EVE: Explain Code');
 }
-function deactivate() { client?.dispose(); }
+function deactivate() {
+    if (out) {
+        out.appendLine('EVE extension deactivated');
+    }
+}
 //# sourceMappingURL=extension.js.map

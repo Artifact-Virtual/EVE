@@ -13,25 +13,21 @@
   "contributes": {
     "commands": [
       { "command": "eve.chat", "title": "EVE: Chat" },
-      { "command": "eve.plan", "title": "EVE: Plan Edits" },
-      { "command": "eve.apply", "title": "EVE: Apply Edits" },
-      { "command": "eve.openWeb", "title": "EVE: Open WebUI" },
-      { "command": "eve.startDaemon", "title": "EVE: Start CLI Daemon" },
-      { "command": "eve.stopDaemon", "title": "EVE: Stop CLI Daemon" }
+      { "command": "eve.quickFix", "title": "EVE: Quick Fix" },
+      { "command": "eve.explainCode", "title": "EVE: Explain Code" }
     ],
     "configuration": {
       "type": "object",
       "title": "EVE",
       "properties": {
-        "eve.cliPath": { "type": "string", "default": "eve", "description": "Path to EVE CLI binary" },
-        "eve.args": { "type": "array", "items": { "type": "string" }, "default": [] },
-        "eve.logLevel": { "type": "string", "enum": ["error","warn","info","debug","trace"], "default": "info" },
-        "eve.serverMode": { "type": "string", "enum": ["stdio","http"], "default": "stdio" },
-        "eve.httpPort": { "type": "number", "default": 0 }
+        "eve.cliPath": { "type": "string", "default": "l:\\devops\\_sandbox\\EVE\\eve.exe", "description": "Path to EVE CLI binary" },
+        "eve.args": { "type": "array", "items": { "type": "string" }, "default": [] }
       }
     },
     "keybindings": [
-      { "command": "eve.chat", "key": "ctrl+alt+e", "mac": "cmd+alt+e", "when": "editorTextFocus" }
+      { "command": "eve.chat", "key": "ctrl+alt+e", "mac": "cmd+alt+e", "when": "editorTextFocus" },
+      { "command": "eve.quickFix", "key": "ctrl+alt+f", "mac": "cmd+alt+f", "when": "editorTextFocus" },
+      { "command": "eve.explainCode", "key": "ctrl+alt+x", "mac": "cmd+alt+x", "when": "editorTextFocus" }
     ]
   },
   "scripts": {
